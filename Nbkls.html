@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>⚡ 离谱Emoji狂想曲 | 视觉冲击爆炸动画 ⚡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* 避免选中文字，增强沉浸感 */
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', 'Roboto', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* 疯狂噪点覆盖层，增加抽象质感 */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            background: repeating-radial-gradient(circle at 20% 30%, rgba(0,0,0,0.2) 0px, rgba(255,0,255,0.05) 2px, transparent 4px);
+            mix-blend-mode: overlay;
+            animation: staticShift 0.08s infinite steps(2);
+        }
+
+        @keyframes staticShift {
+            0% { opacity: 0.3; transform: translate(0px,0px); }
+            100% { opacity: 0.8; transform: translate(2px,-1px); }
+        }
+
+        /* 辅助光晕扫描线 */
+        .glow-scan {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(125deg, rgba(255,0,255,0.1) 0%, rgba(0,255,255,0.1) 50%, rgba(255,255,0,0.1) 100%);
+            z-index: 5;
+            mix-blend-mode: screen;
+            animation: hueRotate 0.5s infinite alternate;
+        }
+
+        @keyframes hueRotate {
+            0% { filter: hue-rotate(0deg); opacity: 0.4; }
+            100% { filter: hue-rotate(360deg); opacity: 0.9; }
+        }
+
+        /* 炫酷说明文字 */
+        .insane-title {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: clamp(14px, 4vw, 28px);
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px magenta, 0 0 20px cyan, 0 0 30px yellow;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 8px 20px;
+            border-radius: 60px;
+            width: fit-content;
+            margin: 0 auto 20px auto;
+            z-index: 20;
+            font-family: monospace;
+            letter-spacing: 3px;
+            border: 1px solid rgba(255,255,255,0.5);
+            animation: textFlick 0.2s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes textFlick {
+            0% { text-shadow: 0 0 5px magenta, 0 0 15px cyan; opacity: 0.9; }
+            100% { text-shadow: 0 0 20px yellow, 0 0 35px red; opacity: 1; transform: scale(1.01);}
+        }
+
+        /* 让 SVG 完全铺满，疯狂舞台 */
+        svg {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            z-index: 2;
+        }
+
+        /* 辅助信息浮层 (额外离谱) */
+        .warning-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff00cc;
+            color: #00ffcc;
+            padding: 5px 12px;
+            font-weight: bold;
+            font-size: 12px;
+            border-radius: 30px;
+            z-index: 30;
+            font-family: monospace;
+            animation: rotateBadge 0.8s infinite linear;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 15px red;
+            pointer-events: none;
+        }
+
+        @keyframes rotateBadge {
+            0% { transform: rotate(0deg) scale(1); background: #ff00cc; }
+            50% { transform: rotate(5deg) scale(1.1); background: #00ffcc; color: magenta; }
+            100% { transform: rotate(0deg) scale(1); background: #ff00cc; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="noise-overlay"></div>
+<div class="glow-scan"></div>
+<div class="insane-title">💢 超维度离谱EMOJI 💢 | 疯狂粒子 | 鼠标闪避 💥🌀</div>
+<div class="warning-badge">⚡ 视觉核爆区 ⚡</div>
+
+<svg id="crazySvg" viewBox="0 0 1400 800" preserveAspectRatio="xMidYMid meet">
+    <defs>
+        <!-- 夸张的霓虹滤镜，用于部分元素发光 -->
+        <filter id="glowNeon" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feMerge>
+                <feMergeNode in="offsetblur" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+            <feColorMatrix type="saturate" values="3"/>
+        </filter>
+        
+        <!-- 扭曲+眩晕滤镜（部分大号emoji使用）-->
+        <filter id="warpField" x="-50%" y="-50%" width="200%" height="200%">
+            <feTurbulence baseFrequency="0.02 0.04" numOctaves="2" seed="7" result="turbulence"/>
+            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="12" xChannelSelector="R" yChannelSelector="G"/>
+            <feColorMatrix type="hueRotate" values="360"/>
+        </filter>
+        
+        <!-- 高光闪烁 -->
+        <filter id="flashBang">
+            <feFlood flood-color="magenta" flood-opacity="0.6" result="flood"/>
+            <feComposite in="SourceGraphic" in2="flood" operator="over"/>
+            <feGaussianBlur stdDeviation="2"/>
+        </filter>
+        
+        <!-- 动态背景彩虹渐变 (会被js稍微扰动) -->
+        <radialGradient id="bgRadial" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="#ff00cc" />
+            <stop offset="30%" stop-color="#3300ff" />
+            <stop offset="70%" stop-color="#00ff99" />
+            <stop offset="100%" stop-color="#ffaa00" />
+        </radialGradient>
+        
+        <!-- 闪光矩形模版 -->
+        <pattern id="crazyDots" patternUnits="userSpaceOnUse" width="30" height="30">
+            <circle cx="15" cy="15" r="3" fill="white" opacity="0.6"/>
+            <circle cx="5" cy="25" r="2" fill="yellow" opacity="0.8"/>
+        </pattern>
+    </defs>
+    
+    <!-- 背景层：炫彩动态背景 + 疯狂脉冲圆形 -->
+    <rect width="100%" height="100%" fill="url(#bgRadial)" id="bgRect"/>
+    <circle cx="200" cy="200" r="180" fill="none" stroke="cyan" stroke-width="4" stroke-opacity="0.5" id="pulseCircle1">
+        <animate attributeName="r" values="120;280;120" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="stroke-opacity" values="0.8;0.2;0.8" dur="1.8s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="1100" cy="600" r="150" fill="none" stroke="magenta" stroke-width="6" stroke-opacity="0.6" id="pulseCircle2">
+        <animate attributeName="r" values="100;260;100" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="stroke-dasharray" values="5,10;20,30;5,10" dur="1.2s" repeatCount="indefinite" />
+    </circle>
+    <!-- 抽象几何碎片 -->
+    <polygon points="300,100 330,180 270,210 250,150" fill="rgba(255,0,255,0.2)" stroke="gold" stroke-width="2">
+        <animateTransform attributeName="transform" type="rotate" from="0 300 150" to="360 300 150" dur="7s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="1000,700 1080,720 1050,780 980,750" fill="rgba(0,255,200,0.3)" stroke="lime" stroke-width="2">
+        <animateTransform attributeName="transform" type="scale" values="1;1.3;1" dur="0.9s" repeatCount="indefinite"/>
+    </polygon>
+    
+    <!-- 动态扭曲文字 (超大离谱) -->
+    <text x="700" y="80" font-size="38" fill="white" font-weight="bold" text-anchor="middle" filter="url(#warpField)" style="font-family: monospace">⚠️ 精 神 污 染 区 ⚠️</text>
+    <text x="1200" y="760" font-size="28" fill="cyan" text-anchor="middle" filter="url(#glowNeon)" opacity="0.9">🔥 疯 狂 多 重 宇 宙 🔥</text>
+    
+    <!-- 这里将由js动态生成所有离谱emoji粒子 -->
+    <g id="emojiParticlesGroup"></g>
+</svg>
+
+<script>
+    (function(){
+        // ---------- 离谱参数 ----------
+        const SVG_NS = "http://www.w3.org/2000/svg";
+        const svg = document.getElementById("crazySvg");
+        const particlesGroup = document.getElementById("emojiParticlesGroup");
+        
+        // 世界观: 1400x800 舞台 (viewBox固定)
+        const W = 1400, H = 800;
+        
+        // ---------- 超多种类emoji库 (抽象离谱) ----------
+        const emojiList = [
+            "😂","🤣","😍","😎","🤪","😱","🥶","🥵","🤯","💀","👽","🤖","🎃","😈","👹","👺","💩","🔥","✨","⭐","💥","💫","💢","💦","💨","🌀","🌪️","🌈","🍕","🍔","🎉","🎈","🔪","💣","💉","🧠","🦷","👁️","🗣️","💋","🧨","⚡","❓","❗","💯","🤬","🕳️","🦄","🐉","🐲","🍌","🤡","👾","🎲","♠️","♦️","🃏","💎","💊","🧪","🔮","🪄","⚰️","👻","💝","💔","💥","💢","💤","👀","🧿","🕯️"
+        ];
+        
+        // 粒子数量 (越多越癫狂)
+        const PARTICLE_COUNT = 85;
+        
+        // 存储粒子对象
+        let particles = [];
+        
+        // 鼠标坐标 (viewBox坐标系)
+        let mouseX = W/2, mouseY = H/2;
+        let mouseActive = false;
+        
+        // 获取鼠标在svg viewBox中的坐标
+        function getMouseCoord(evt) {
+            const pt = svg.createSVGPoint();
+            pt.x = evt.clientX;
+            pt.y = evt.clientY;
+            const cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+            return { x: cursor.x, y: cursor.y };
+        }
+        
+        // 鼠标移动监听 - 产生排斥力场
+        svg.addEventListener("mousemove", (e) => {
+            const { x, y } = getMouseCoord(e);
+            mouseX = Math.min(W, Math.max(0, x));
+            mouseY = Math.min(H, Math.max(0, y));
+            mouseActive = true;
+        });
+        svg.addEventListener("mouseleave", () => {
+            mouseActive = false;
+        });
+        
+        // 随机范围函数
+        function randomRange(min, max) {
+            return min + Math.random() * (max - min);
+        }
+        
+        // 创建单个粒子 (emoji)
+        function createParticle(index) {
+            // 随机选择emoji
+            const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+            // 初始位置随机
+            const x = randomRange(50, W-50);
+            const y = randomRange(50, H-50);
+            // 速度: 夸张随机方向，速度范围 -2.5 到 2.5 (有些飞快)
+            let vx = randomRange(-2.8, 2.8);
+            let vy = randomRange(-2.8, 2.8);
+            // 偶尔出现极快粒子 (冲击感)
+            if(Math.random() < 0.2) {
+                vx *= 2.2;
+                vy *= 2.2;
+            }
+            // 旋转角速度 (rad/frame 大概每帧0.02~0.2弧度，大约1~12度)
+            const angleSpeed = randomRange(-0.12, 0.12);
+            let angle = randomRange(0, Math.PI * 2);
+            // 缩放动态参数: 每个粒子独特的呼吸/脉冲频率和相位
+            const scaleFreq = randomRange(0.8, 3.2);   // 振荡速度
+            const scalePhase = randomRange(0, Math.PI * 2);
+            const scaleBase = randomRange(0.6, 1.2);    // 基础缩放
+            const scaleAmp = randomRange(0.3, 0.9);     // 振幅，让缩放疯狂跳跃
+            
+            // 字体大小初始为34~68px，配合缩放会更夸张
+            const fontSize = randomRange(32, 72);
+            
+            // 额外特质: 随机滤镜 (有些粒子自带扭曲或发光)
+            let filterId = null;
+            const filterRand = Math.random();
+            if(filterRand < 0.15) filterId = "url(#warpField)";
+            else if(filterRand < 0.3) filterId = "url(#glowNeon)";
+            
+            // 创建SVG text元素
+            const textElem = document.createElementNS(SVG_NS, "text");
+            textElem.setAttribute("text-anchor", "middle");
+            textElem.setAttribute("dominant-baseline", "middle");
+            textElem.setAttribute("font-size", fontSize);
+            textElem.textContent = emoji;
+            textElem.setAttribute("style", "font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;");
+            if(filterId) textElem.setAttribute("filter", filterId);
+            // 初始变换（无位置，后面动画更新）
+            textElem.setAttribute("transform", `translate(${x},${y}) rotate(0) scale(1)`);
+            particlesGroup.appendChild(textElem);
+            
+            return {
+                elem: textElem,
+                x, y, vx, vy,
+                angle, angleSpeed,
+                scaleFreq, scalePhase, scaleBase, scaleAmp,
+                fontSize,
+                filterId
+            };
+        }
+        
+        // 随机重置一个粒子的属性（增加离谱随机突变效果）
+        function mutateParticle(p) {
+            // 突变：随机改变速度方向，或者emoji，甚至缩放参数，让动画永不无聊
+            if(Math.random() < 0.4) {
+                p.vx += randomRange(-1.2, 1.2);
+                p.vy += randomRange(-1.2, 1.2);
+                // 限制最大速度绝对值不超过6
+                p.vx = Math.min(6, Math.max(-6, p.vx));
+                p.vy = Math.min(6, Math.max(-6, p.vy));
+            }
+            if(Math.random() < 0.2) {
+                // 突然更换emoji
+                const newEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+                p.elem.textContent = newEmoji;
+            }
+            if(Math.random() < 0.15) {
+                // 旋转速度突变
+                p.angleSpeed = randomRange(-0.18, 0.18);
+            }
+            if(Math.random() < 0.1) {
+                // 字体大小跳跃
+                const newSize = randomRange(28, 88);
+                p.elem.setAttribute("font-size", newSize);
+                p.fontSize = newSize;
+            }
+            // 滤镜随机切换
+            if(Math.random() < 0.1) {
+                const r = Math.random();
+                if(r < 0.33) p.elem.setAttribute("filter", "url(#warpField)");
+                else if(r < 0.66) p.elem.setAttribute("filter", "url(#glowNeon)");
+                else p.elem.removeAttribute("filter");
+            }
+        }
+        
+        // 边界反弹 (带夸张能量反馈)
+        function handleBoundary(p) {
+            let bounced = false;
+            // 左右边界 + 额外飞出脉冲效果
+            if(p.x < 10) {
+                p.x = 10;
+                p.vx = Math.abs(p.vx) * (Math.random() * 0.8 + 0.8);
+                bounced = true;
+            }
+            if(p.x > W - 10) {
+                p.x = W - 10;
+                p.vx = -Math.abs(p.vx) * (Math.random() * 0.8 + 0.8);
+                bounced = true;
+            }
+            if(p.y < 10) {
+                p.y = 10;
+                p.vy = Math.abs(p.vy) * (Math.random() * 0.8 + 0.8);
+                bounced = true;
+            }
+            if(p.y > H - 10) {
+                p.y = H - 10;
+                p.vy = -Math.abs(p.vy) * (Math.random() * 0.8 + 0.8);
+                bounced = true;
+            }
+            // 碰撞边界时额外突变增加视觉刺激
+            if(bounced && Math.random() < 0.5) {
+                mutateParticle(p);
+                // 制造闪烁效果: 瞬间改变文本透明度或加闪光
+                p.elem.setAttribute("filter", "url(#flashBang)");
+                setTimeout(() => {
+                    if(p.elem) {
+                        if(p.filterId === "url(#warpField)") p.elem.setAttribute("filter", "url(#warpField)");
+                        else if(p.filterId === "url(#glowNeon)") p.elem.setAttribute("filter", "url(#glowNeon)");
+                        else p.elem.removeAttribute("filter");
+                    }
+                }, 100);
+            }
+        }
+        
+        // 鼠标排斥力 (离谱冲击力)
+        function applyMouseForce(p) {
+            if(!mouseActive) return;
+            const dx = p.x - mouseX;
+            const dy = p.y - mouseY;
+            const dist = Math.hypot(dx, dy);
+            if(dist < 5) {
+                // 极端接近: 直接弹飞！
+                const angleForce = Math.atan2(dy, dx);
+                const forceMag = 7.5;
+                p.vx += Math.cos(angleForce) * forceMag;
+                p.vy += Math.sin(angleForce) * forceMag;
+                return;
+            }
+            if(dist < 130) {
+                const strength = (1 - dist / 130) * 2.2;  // 强大排斥力
+                const dirX = dx / dist;
+                const dirY = dy / dist;
+                p.vx += dirX * strength;
+                p.vy += dirY * strength;
+                // 限速保持疯狂但不至于飞出宇宙
+                const maxSpeed = 8.5;
+                if(Math.abs(p.vx) > maxSpeed) p.vx = p.vx > 0 ? maxSpeed : -maxSpeed;
+                if(Math.abs(p.vy) > maxSpeed) p.vy = p.vy > 0 ? maxSpeed : -maxSpeed;
+            }
+        }
+        
+        // 粒子间互斥 (增加混乱感，可选轻度)
+        function applyParticleRepulsion(p, idx) {
+            // 为了避免O(N^2)太卡，只取部分随机或只对附近? 由于85个粒子，全量互斥问题不大，但为了平滑，进行稀疏互斥（每帧随机一半？其实全量85*85=7225计算ok）
+            for(let i = idx+1; i < particles.length; i++) {
+                const other = particles[i];
+                const dx = p.x - other.x;
+                const dy = p.y - other.y;
+                const dist = Math.hypot(dx, dy);
+                if(dist < 28 && dist > 0.01) {
+                    const force = (28 - dist) * 0.28;
+                    const angle = Math.atan2(dy, dx);
+                    const fx = Math.cos(angle) * force;
+                    const fy = Math.sin(angle) * force;
+                    p.vx += fx;
+                    p.vy += fy;
+                    other.vx -= fx;
+                    other.vy -= fy;
+                }
+            }
+        }
+        
+        // 背景颜色疯狂渐变动画 (增加视觉冲击)
+        let bgHue = 0;
+        function animateBackground() {
+            const radialGrad = document.getElementById("bgRadial");
+            if(radialGrad) {
+                // 让渐变的偏移量和颜色循环变化
+                const t = Date.now() * 0.002;
+                const r = 0.5 + Math.sin(t) * 0.3;
+                const g = 0.5 + Math.sin(t + 2) * 0.3;
+                const b = 0.5 + Math.sin(t + 4) * 0.3;
+                const col1 = `hsl(${(Date.now() * 0.5) % 360}, 100%, 55%)`;
+                const col2 = `hsl(${(Date.now() * 0.8 + 120) % 360}, 100%, 50%)`;
+                const col3 = `hsl(${(Date.now() * 1.2 + 240) % 360}, 100%, 60%)`;
+                const stops = radialGrad.querySelectorAll("stop");
+                if(stops.length >= 4) {
+                    stops[0].setAttribute("stop-color", col1);
+                    stops[1].setAttribute("stop-color", col2);
+                    stops[2].setAttribute("stop-color", col3);
+                    stops[3].setAttribute("stop-color", `hsl(${(Date.now() * 0.3 + 300) % 360}, 90%, 45%)`);
+                }
+                // 动态移动渐变中心
+                const cx = 40 + Math.sin(Date.now() * 0.0007) * 30;
+                const cy = 30 + Math.cos(Date.now() * 0.0009) * 25;
+                radialGrad.setAttribute("cx", `${cx}%`);
+                radialGrad.setAttribute("cy", `${cy}%`);
+            }
+            requestAnimationFrame(animateBackground);
+        }
+        
+        // 随机全局突变定时器 (每隔1~2秒所有粒子可能随机疯狂)
+        let globalMutateInterval;
+        function startGlobalMutate() {
+            globalMutateInterval = setInterval(() => {
+                // 夸张全局冲击: 随机增加所有粒子的速度或改变方向
+                for(let p of particles) {
+                    if(Math.random() < 0.6) {
+                        p.vx += randomRange(-1.2, 1.2);
+                        p.vy += randomRange(-1.2, 1.2);
+                        // 限速
+                        p.vx = Math.min(7.2, Math.max(-7.2, p.vx));
+                        p.vy = Math.min(7.2, Math.max(-7.2, p.vy));
+                    }
+                    if(Math.random() < 0.3) {
+                        // 随机置换 emoji 狂魔
+                        const newEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+                        p.elem.textContent = newEmoji;
+                    }
+                    if(Math.random() < 0.2) {
+                        // 瞬间缩放脉冲特效
+                        p.elem.setAttribute("filter", "url(#flashBang)");
+                        setTimeout(() => {
+                            if(p.elem && p.filterId === "url(#warpField)") p.elem.setAttribute("filter", "url(#warpField)");
+                            else if(p.elem && p.filterId === "url(#glowNeon)") p.elem.setAttribute("filter", "url(#glowNeon)");
+                            else if(p.elem) p.elem.removeAttribute("filter");
+                        }, 120);
+                    }
+                }
+                // 额外背景闪光: 创建一个临时的高亮矩形闪烁
+                const flashRect = document.createElementNS(SVG_NS, "rect");
+                flashRect.setAttribute("x", "0");
+                flashRect.setAttribute("y", "0");
+                flashRect.setAttribute("width", "100%");
+                flashRect.setAttribute("height", "100%");
+                flashRect.setAttribute("fill", `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},0.3)`);
+                flashRect.setAttribute("pointer-events", "none");
+                svg.appendChild(flashRect);
+                setTimeout(() => flashRect.remove(), 100);
+            }, 1800);
+        }
+        
+        // 动画循环: 更新每个粒子的位置，旋转，缩放
+        let lastTimestamp = 0;
+        function animateParticles(now) {
+            // 让缩放依赖时间
+            const time = now * 0.003;  // 全局时间因子
+            
+            for(let p of particles) {
+                // 应用外力
+                applyMouseForce(p);
+                // 粒子间互斥 (夸张混乱)
+                // 为了性能，可以只做部分但效果疯狂，做全量:
+                // 注意双重循环稍重但85粒子还好, 如果卡可以降低互斥频率, 但现代设备足够
+                for(let other of particles) {
+                    if(p === other) continue;
+                    const dx = p.x - other.x;
+                    const dy = p.y - other.y;
+                    const dist = Math.hypot(dx, dy);
+                    if(dist < 32) {
+                        const force = (32 - dist) * 0.18;
+                        const angle = Math.atan2(dy, dx);
+                        p.vx += Math.cos(angle) * force;
+                        p.vy += Math.sin(angle) * force;
+                    }
+                }
+                
+                // 更新位置
+                p.x += p.vx;
+                p.y += p.vy;
+                
+                // 边界处理 + 反弹突变
+                handleBoundary(p);
+                
+                // 随机轻微突变（每帧概率很低，增加不可预测）
+                if(Math.random() < 0.008) mutateParticle(p);
+                
+                // 旋转角度更新
+                p.angle += p.angleSpeed;
+                // 缩放动态: 根据正弦波剧烈震荡，制造呼吸/爆炸脉冲感
+                const scaleVal = p.scaleBase + p.scaleAmp * Math.sin(time * p.scaleFreq + p.scalePhase);
+                // 限制缩放范围 0.3 ~ 2.2 更夸张
+                const finalScale = Math.min(2.3, Math.max(0.4, scaleVal));
+                
+                // 构建transform: translate + rotate + scale (顺序保证中心旋转)
+                const transformStr = `translate(${p.x}, ${p.y}) rotate(${p.angle * (180/Math.PI)}) scale(${finalScale})`;
+                p.elem.setAttribute("transform", transformStr);
+                
+                // 偶尔动态改变透明度 (营造闪烁)
+                if(Math.random() < 0.02) {
+                    const opacity = 0.6 + Math.random() * 0.5;
+                    p.elem.setAttribute("opacity", opacity);
+                } else if(p.elem.getAttribute("opacity") && Math.random() < 0.05) {
+                    p.elem.removeAttribute("opacity");
+                }
+            }
+            
+            requestAnimationFrame(animateParticles);
+        }
+        
+        // 初始化所有粒子
+        function initParticles() {
+            for(let i = 0; i < PARTICLE_COUNT; i++) {
+                const p = createParticle(i);
+                particles.push(p);
+            }
+        }
+        
+        // 额外定期改变整体svg的滤镜氛围: 添加随机疯狂光晕圈
+        function addRandomGlowOrbs() {
+            setInterval(() => {
+                const orb = document.createElementNS(SVG_NS, "circle");
+                const cx = randomRange(100, W-100);
+                const cy = randomRange(100, H-100);
+                const r = randomRange(30, 150);
+                orb.setAttribute("cx", cx);
+                orb.setAttribute("cy", cy);
+                orb.setAttribute("r", r);
+                orb.setAttribute("fill", `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},0.2)`);
+                orb.setAttribute("stroke", `hsl(${Math.random()*360}, 100%, 70%)`);
+                orb.setAttribute("stroke-width", "3");
+                orb.setAttribute("filter", "url(#glowNeon)");
+                svg.appendChild(orb);
+                // 渐隐渐消
+                let opacity = 0.6;
+                const fade = setInterval(() => {
+                    opacity -= 0.03;
+                    orb.setAttribute("fill-opacity", opacity);
+                    orb.setAttribute("stroke-opacity", opacity);
+                    if(opacity <= 0) {
+                        orb.remove();
+                        clearInterval(fade);
+                    }
+                }, 60);
+                setTimeout(() => clearInterval(fade), 2000);
+            }, 2800);
+        }
+        
+        // 启动所有疯狂效果
+        initParticles();
+        animateBackground();
+        startGlobalMutate();
+        addRandomGlowOrbs();
+        requestAnimationFrame(animateParticles);
+        
+        // 让背景脉冲圆圈的动画更离谱 (额外动态修改)
+        const pulseCircle = document.getElementById("pulseCircle1");
+        if(pulseCircle) {
+            setInterval(() => {
+                const newColor = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                pulseCircle.setAttribute("stroke", newColor);
+                const circle2 = document.getElementById("pulseCircle2");
+                if(circle2) circle2.setAttribute("stroke", `hsl(${Math.random() * 360}, 100%, 65%)`);
+            }, 500);
+        }
+        
+        // 增加窗口自适应提示 (完全保留viewbox效果)
+        console.log("💢💢 离谱Emoji冲击波已启动 💢💢");
+    })();
+</script>
+</body>
+</html>
