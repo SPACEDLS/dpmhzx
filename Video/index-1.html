@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>GitHub 影库 | 极简视频播放器</title>
+    <!-- 使用简洁的字体与图标库 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f6f9fc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #1e2a3e;
+            padding: 2rem 1.5rem;
+        }
+
+        /* 主容器 大气留白 */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 头部简洁 */
+        .header {
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1e2a3e, #2c3e4e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+        .header p {
+            color: #5b6e8c;
+            margin-top: 0.5rem;
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+        .github-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #eef2f6;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.75rem;
+        }
+        .github-badge i {
+            color: #1e2a3e;
+        }
+
+        /* 配置卡片 简洁柔光 */
+        .config-card {
+            background: #ffffffdd;
+            backdrop-filter: blur(2px);
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f8;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.2s ease;
+        }
+        .form-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        .input-group {
+            flex: 1 1 180px;
+            min-width: 150px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c86a3;
+            margin-bottom: 0.4rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 18px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-family: 'Inter', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #3b7cbf;
+            box-shadow: 0 0 0 3px rgba(59,124,191,0.1);
+        }
+        .btn-primary {
+            background: #1e2a3e;
+            border: none;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-primary:hover {
+            background: #2c3e4e;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #2c3e4e;
+            padding: 0.7rem 1.3rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #e6edf4;
+        }
+
+        /* 两分区布局: 播放区 + 列表区 */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 1.8rem;
+        }
+
+        /* 左侧播放器区域 大气留白 */
+        .player-section {
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            transition: all 0.2s;
+            border: 1px solid #ecf3f9;
+        }
+        .video-wrapper {
+            background: #0f1720;
+            position: relative;
+            aspect-ratio: 16 / 9;
+            width: 100%;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #0a0f16;
+            display: block;
+        }
+        .player-info {
+            padding: 1.2rem 1.5rem;
+            border-top: 1px solid #f0f4fa;
+        }
+        .player-info h3 {
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e2a3e;
+        }
+        .player-info p {
+            color: #5b6e8c;
+            font-size: 0.8rem;
+            margin-top: 0.4rem;
+            word-break: break-all;
+        }
+        .empty-player-message {
+            padding: 2rem;
+            text-align: center;
+            color: #8ba0bc;
+            font-size: 0.9rem;
+        }
+
+        /* 右侧视频库分区（列表区） */
+        .library-section {
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid #ecf3f9;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: fit-content;
+            max-height: 70vh;
+        }
+        .library-header {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #eff3f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+        .library-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .video-count {
+            background: #eef2f8;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #2c3e4e;
+        }
+        .video-list {
+            list-style: none;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+            flex: 1;
+        }
+        .video-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1.5rem;
+            margin: 0.2rem 0;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-left: 3px solid transparent;
+        }
+        .video-item:hover {
+            background: #f8fafd;
+        }
+        .video-item.active {
+            background: #f0f6fe;
+            border-left-color: #3b7cbf;
+        }
+        .video-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow: hidden;
+        }
+        .video-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1e2a3e;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        .video-meta {
+            font-size: 0.7rem;
+            color: #7f96b2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .play-icon {
+            color: #6c8fb3;
+            font-size: 1rem;
+            opacity: 0.7;
+            transition: 0.2s;
+        }
+        .video-item:hover .play-icon {
+            opacity: 1;
+            color: #1e2a3e;
+        }
+        .empty-list {
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: #9aafca;
+            font-size: 0.85rem;
+        }
+        .loader {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #2c3e4e;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .error-msg {
+            color: #c2412c;
+            background: #fff3f0;
+            padding: 0.8rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 0.5rem 1rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 860px) {
+            body {
+                padding: 1rem;
+            }
+            .two-columns {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .library-section {
+                max-height: 450px;
+            }
+            .form-grid {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-primary, .btn-secondary {
+                justify-content: center;
+            }
+        }
+        /* 简洁大气滚动条 */
+        .video-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .video-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .video-list::-webkit-scrollbar-thumb {
+            background: #cbdae9;
+            border-radius: 10px;
+        }
+        footer {
+            margin-top: 2.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8da0b5;
+            border-top: 1px solid #eef2f8;
+            padding-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="header">
+        <h1><i class="fas fa-film" style="margin-right: 12px; color: #2c3e4e;"></i>GitHub 影库</h1>
+        <p>从您的 GitHub 仓库加载视频，简洁分区播放 · 优雅体验</p>
+        <div class="github-badge">
+            <i class="fab fa-github"></i> 仓库即片库 · 支持 mp4 / webm / mov
+        </div>
+    </div>
+
+    <!-- 配置区块 : 连接GitHub数据库 -->
+    <div class="config-card">
+        <div class="form-grid">
+            <div class="input-group">
+                <label><i class="fab fa-github-alt"></i> Owner</label>
+                <input type="text" id="owner" placeholder="用户名" value="your-username">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-database"></i> Repo</label>
+                <input type="text" id="repo" placeholder="仓库名" value="your-repo">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-code-branch"></i> Branch</label>
+                <input type="text" id="branch" placeholder="分支" value="main">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-folder-open"></i> 视频目录</label>
+                <input type="text" id="folderPath" placeholder="如: videos/ 或留空根目录" value="videos">
+            </div>
+            <div>
+                <button id="loadBtn" class="btn-primary"><i class="fas fa-cloud-download-alt"></i> 加载视频库</button>
+            </div>
+            <div>
+                <button id="resetExampleBtn" class="btn-secondary"><i class="fas fa-info-circle"></i> 示例说明</button>
+            </div>
+        </div>
+        <div style="font-size: 0.7rem; color:#7f96b2; margin-top: 12px;">
+            <i class="fas fa-lightbulb"></i> 提示：填写自己的 GitHub 仓库与视频目录（视频格式 mp4/webm/mov），点击加载即可从 GitHub 数据库获取视频。使用 jsDelivr CDN 加速播放。
+        </div>
+    </div>
+
+    <!-- 双分区布局：左侧播放器 + 右侧列表库 -->
+    <div class="two-columns">
+        <!-- 左侧 PLAYER 分区 -->
+        <div class="player-section">
+            <div class="video-wrapper">
+                <video id="mainVideo" controls preload="metadata" poster="">
+                    <source src="" type="video/mp4">
+                    您的浏览器不支持 video 标签。
+                </video>
+            </div>
+            <div class="player-info" id="playerInfo">
+                <h3><i class="fas fa-play-circle"></i> <span id="currentVideoTitle">未选择视频</span></h3>
+                <p id="currentVideoPath">👆 从右侧视频库点击任意视频开始播放</p>
+            </div>
+        </div>
+
+        <!-- 右侧 LIBRARY 分区 (视频列表) -->
+        <div class="library-section">
+            <div class="library-header">
+                <h2><i class="fas fa-video"></i> 视频分区 <span class="video-count" id="videoCount">0</span></h2>
+                <i class="fas fa-database" style="color:#8ba0bc;"></i>
+            </div>
+            <div id="videoListContainer" class="video-list">
+                <div class="empty-list">
+                    <i class="fas fa-cloud-arrow-up" style="font-size: 28px; opacity: 0.4; margin-bottom: 10px; display: block;"></i>
+                    请在上方配置 GitHub 仓库信息<br>点击「加载视频库」获取视频
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <i class="fab fa-github"></i> 视频从您的 GitHub 仓库动态获取 | 简洁大气 · 即点即播
+    </footer>
+</div>
+
+<script>
+    // DOM 元素
+    const ownerInput = document.getElementById('owner');
+    const repoInput = document.getElementById('repo');
+    const branchInput = document.getElementById('branch');
+    const folderPathInput = document.getElementById('folderPath');
+    const loadBtn = document.getElementById('loadBtn');
+    const resetExampleBtn = document.getElementById('resetExampleBtn');
+    const videoListContainer = document.getElementById('videoListContainer');
+    const videoCountSpan = document.getElementById('videoCount');
+    const mainVideo = document.getElementById('mainVideo');
+    const currentVideoTitleSpan = document.getElementById('currentVideoTitle');
+    const currentVideoPathSpan = document.getElementById('currentVideoPath');
+
+    // 辅助函数: 格式化文件大小
+    function formatFileSize(bytes) {
+        if (!bytes) return '未知大小';
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    // 检测是否是视频文件 (扩展名)
+    const videoExtensions = ['.mp4', '.webm', '.mov', '.mkv', '.avi', '.m4v'];
+    function isVideoFile(filename) {
+        const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
+        return videoExtensions.includes(ext);
+    }
+
+    // 生成 jsDelivr CDN 链接 (支持 range 请求，流畅播放)
+    function buildCdnUrl(owner, repo, branch, filePath) {
+        // 移除开头的斜杠，统一处理路径
+        let cleanPath = filePath.startsWith('/') ? filePath.slice(1) : filePath;
+        // URL 编码特殊字符
+        const encodedPath = cleanPath.split('/').map(part => encodeURIComponent(part)).join('/');
+        return `https://cdn.jsdelivr.net/gh/${owner}/${repo}@${branch}/${encodedPath}`;
+    }
+
+    // 从 GitHub API 获取目录内容
+    async function fetchVideoListFromGitHub(owner, repo, branch, folderPath) {
+        // 构建 GitHub API URL
+        let apiPath = folderPath.trim();
+        if (apiPath.startsWith('/')) apiPath = apiPath.slice(1);
+        let apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${apiPath}?ref=${branch}`;
+        if (!apiPath) {
+            // 根目录
+            apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents?ref=${branch}`;
+        }
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            if (response.status === 404) throw new Error(`仓库路径不存在 / 无权限访问。请检查仓库名、目录和分支是否正确`);
+            if (response.status === 403) throw new Error(`API 速率限制，稍后重试或确保仓库公开`);
+            throw new Error(`请求失败 (${response.status})`);
+        }
+        const data = await response.json();
+        if (!Array.isArray(data)) {
+            // 可能返回单个文件
+            throw new Error('目录路径错误或该路径不是文件夹，请确认视频目录地址');
+        }
+        // 过滤出视频文件
+        const videoFiles = data.filter(item => item.type === 'file' && isVideoFile(item.name));
+        // 映射我们需要的数据: 名称, 原始路径, 大小
+        const videos = videoFiles.map(file => ({
+            name: file.name,
+            path: file.path,          // 相对仓库根路径，用于构造 CDN
+            size: file.size,
+            downloadUrl: file.download_url  // 备用但主要使用CDN
+        }));
+        return videos;
+    }
+
+    // 渲染视频列表
+    function renderVideoList(videos, owner, repo, branch) {
+        if (!videos.length) {
+            videoListContainer.innerHTML = `<div class="empty-list"><i class="fas fa-folder-open" style="font-size: 26px; opacity: 0.4;"></i><br />📭 未找到视频文件<br>请确认目录中包含 mp4 / webm / mov 格式视频</div>`;
+            videoCountSpan.innerText = '0';
+            return;
+        }
+        videoCountSpan.innerText = videos.length;
+        const listHtml = videos.map((video, idx) => {
+            const sizeStr = formatFileSize(video.size);
+            // 使用 CDN 链接做播放
+            const cdnSrc = buildCdnUrl(owner, repo, branch, video.path);
+            return `
+                <li class="video-item" data-video-src="${cdnSrc}" data-video-name="${escapeHtml(video.name)}" data-video-path="${escapeHtml(video.path)}">
+                    <div class="video-info">
+                        <div class="video-name">${escapeHtml(video.name)}</div>
+                        <div class="video-meta"><i class="far fa-file-video"></i> ${sizeStr}</div>
+                    </div>
+                    <div class="play-icon"><i class="fas fa-play"></i></div>
+                </li>
+            `;
+        }).join('');
+        videoListContainer.innerHTML = `<ul style="list-style: none; margin:0; padding:0;">${listHtml}</ul>`;
+        
+        // 绑定点击事件 (事件委托)
+        const items = document.querySelectorAll('.video-item');
+        items.forEach(item => {
+            item.addEventListener('click', (e) => {
+                // 移除其他高亮
+                document.querySelectorAll('.video-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                const videoSrc = item.getAttribute('data-video-src');
+                const videoName = item.getAttribute('data-video-name');
+                const videoPath = item.getAttribute('data-video-path');
+                if (videoSrc) {
+                    playVideo(videoSrc, videoName, videoPath);
+                }
+            });
+        });
+    }
+
+    // 简单的防XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // 播放视频
+    async function playVideo(src, videoName, videoPath) {
+        if (!src) return;
+        // 更新播放器UI
+        currentVideoTitleSpan.innerText = videoName || '正在播放';
+        currentVideoPathSpan.innerText = `📁 ${videoPath || 'GitHub 仓库视频'}`;
+        // 设置video源并尝试播放
+        const wasPaused = mainVideo.paused;
+        // 保存当前播放状态，更换源
+        mainVideo.src = src;
+        mainVideo.load();
+        // 因为用户点击列表触发（有用户交互），可以直接调用play
+        try {
+            await mainVideo.play();
+        } catch (err) {
+            console.warn('自动播放被浏览器阻止，请手动点击播放按钮', err);
+            // 静默失败，用户可以手动点击播放器按钮
+        }
+    }
+
+    // 显示加载状态
+    function setLoadingState(isLoading) {
+        if (isLoading) {
+            videoListContainer.innerHTML = `<div class="loader"><div class="spinner"></div><div style="margin-left: 10px;">加载视频库中...</div></div>`;
+            videoCountSpan.innerText = '...';
+        }
+    }
+
+    function showError(message) {
+        videoListContainer.innerHTML = `<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> ${escapeHtml(message)}</div><div class="empty-list" style="padding-top:0;">请修改配置后重试。</div>`;
+        videoCountSpan.innerText = '0';
+    }
+
+    // 核心加载流程: 调用API并更新右侧分区
+    async function loadVideosFromRepo() {
+        let owner = ownerInput.value.trim();
+        let repo = repoInput.value.trim();
+        let branch = branchInput.value.trim();
+        let folderPath = folderPathInput.value.trim();
+        
+        if (!owner || !repo) {
+            showError('请填写 GitHub Owner 和 Repo 名称');
+            return;
+        }
+        if (!branch) branch = 'main';
+        // 去除末尾斜杠
+        if (folderPath.endsWith('/')) folderPath = folderPath.slice(0, -1);
+        
+        setLoadingState(true);
+        try {
+            const videos = await fetchVideoListFromGitHub(owner, repo, branch, folderPath);
+            if (videos.length === 0) {
+                renderVideoList([], owner, repo, branch); // 显示空状态
+                showError(`在目录 "${folderPath || '根目录'}" 未找到视频文件。\n请确认目录中有 .mp4/.webm/.mov 文件且仓库公开。`);
+            } else {
+                renderVideoList(videos, owner, repo, branch);
+                // 可选：如果有视频自动选中第一个（提升体验）
+                if (videos.length > 0) {
+                    const firstVideo = videos[0];
+                    const firstSrc = buildCdnUrl(owner, repo, branch, firstVideo.path);
+                    // 自动高亮第一个，但不自动播放避免突兀；静默预置但不自动抢播，可以显示待播状态
+                    // 但为了让界面友好: 在右侧列表自动高亮，播放区显示待播提示，用户点击再播
+                    // 同时更新播放器信息为第一视频的信息（等待点击）
+                    const firstItem = document.querySelector('.video-item');
+                    if (firstItem) {
+                        // 不高亮自动播放，但显示待播信息
+                        currentVideoTitleSpan.innerText = `📀 就绪 · ${firstVideo.name}`;
+                        currentVideoPathSpan.innerText = `✨ 点击右侧播放按钮开始`;
+                    }
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            let errMsg = err.message || '未知错误，检查网络或仓库权限';
+            if (errMsg.includes('API')) errMsg = 'GitHub API 异常，请确保仓库公开并且路径正确。';
+            showError(`获取失败: ${errMsg}`);
+        } finally {
+            // 移除加载状态已经在渲染里覆盖
+        }
+    }
+
+    // 示例说明: 展示提示并填入演示仓库信息(提示用户替换为自己的真实仓库)
+    function showExampleHint() {
+        // 填入一个公开测试仓库的示例 (可以使用 ghost 仓库，但为了避免无视频，填入示例提醒)
+        ownerInput.value = 'your-username';
+        repoInput.value = 'your-repo';
+        branchInput.value = 'main';
+        folderPathInput.value = 'videos';
+        showError(`🔍 示例填写：请替换成您自己的 GitHub 仓库信息。\n确保仓库公开且视频目录存在。支持 mp4/webm/mov。\n\n点击「加载视频库」从您的 GitHub 数据库获取视频。`);
+        videoListContainer.innerHTML = `<div class="empty-list"><i class="fas fa-hand-point-right"></i> 请正确填写您的 GitHub 仓库配置<br>视频存储路径（例如 videos/）</div>`;
+        videoCountSpan.innerText = '0';
+        // 重置播放区提示
+        currentVideoTitleSpan.innerText = '等待配置';
+        currentVideoPathSpan.innerText = '💡 填写仓库信息后点击加载';
+        mainVideo.src = '';
+    }
+
+    // 事件绑定
+    loadBtn.addEventListener('click', () => {
+        loadVideosFromRepo();
+    });
+    resetExampleBtn.addEventListener('click', () => {
+        showExampleHint();
+    });
+
+    // 初始化时，若用户未配置则优雅提示; 不清空预先填入便于直接展示
+    // 如果输入框均为默认占位符, 提供一个友好消息
+    if (ownerInput.value === 'your-username' && repoInput.value === 'your-repo') {
+        showExampleHint();
+    } else {
+        // 如果用户手动改过，不自动加载，等待点击按钮
+        videoListContainer.innerHTML = `<div class="empty-list"><i class="fas fa-cloud-upload-alt"></i> 准备好后点击「加载视频库」</div>`;
+    }
+</script>
+</body>
+</html>
