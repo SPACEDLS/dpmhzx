@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DAGE MEDIA</title>
+    <title>DPMHZX - 视频流</title>
     <style>
         :root {
             --bg: #000000;
@@ -49,7 +49,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* ============ 主容器 ============ */
         .app-container {
             position: relative;
             width: 100%;
@@ -77,7 +76,6 @@
             }
         }
 
-        /* ============ 顶部导航栏 ============ */
         .top-nav {
             position: absolute;
             top: 0;
@@ -154,7 +152,6 @@
             background: #000;
         }
 
-        /* ============ 视频滚动容器 ============ */
         .video-scroll-container {
             position: absolute;
             inset: 0;
@@ -169,7 +166,6 @@
             display: none;
         }
 
-        /* ============ 单个视频面板 ============ */
         .video-panel {
             position: relative;
             width: 100%;
@@ -192,7 +188,6 @@
             background: #000;
         }
 
-        /* 视频加载占位 */
         .video-loader {
             position: absolute;
             inset: 0;
@@ -214,13 +209,8 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* 播放/暂停覆盖层 */
         .play-overlay {
             position: absolute;
             inset: 0;
@@ -231,12 +221,8 @@
             pointer-events: none;
             transition: opacity 0.25s ease;
         }
-        .play-overlay.visible {
-            opacity: 1;
-        }
-        .play-overlay.hidden {
-            opacity: 0;
-        }
+        .play-overlay.visible { opacity: 1; }
+        .play-overlay.hidden { opacity: 0; }
         .play-icon-circle {
             width: 70px;
             height: 70px;
@@ -251,14 +237,8 @@
             animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes popIn {
-            from {
-                transform: scale(0.6);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.6); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
         .play-icon-circle svg {
             width: 30px;
@@ -267,7 +247,45 @@
             margin-left: 4px;
         }
 
-        /* ============ 右侧互动按钮组 ============ */
+        /* 视频错误提示 */
+        .video-error-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 8;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            font-size: 14px;
+            gap: 8px;
+            pointer-events: auto;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .video-error-overlay.show {
+            opacity: 1;
+        }
+        .video-error-overlay span {
+            font-size: 32px;
+        }
+        .video-error-overlay button {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            transition: 0.2s;
+        }
+        .video-error-overlay button:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
         .action-bar {
             position: absolute;
             right: 12px;
@@ -279,9 +297,7 @@
             gap: 22px;
             pointer-events: none;
         }
-        .action-bar>* {
-            pointer-events: auto;
-        }
+        .action-bar>* { pointer-events: auto; }
 
         .action-btn {
             display: flex;
@@ -292,9 +308,7 @@
             transition: transform var(--transition-fast);
             position: relative;
         }
-        .action-btn:active {
-            transform: scale(0.9);
-        }
+        .action-btn:active { transform: scale(0.9); }
         .action-btn .icon-circle {
             width: 48px;
             height: 48px;
@@ -328,28 +342,15 @@
             box-shadow: 0 0 25px var(--accent-glow);
             animation: heartBeat 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .action-btn.liked .icon-circle svg {
-            fill: #fff;
-        }
-        .action-btn.liked .action-label {
-            color: var(--accent);
-        }
+        .action-btn.liked .icon-circle svg { fill: #fff; }
+        .action-btn.liked .action-label { color: var(--accent); }
         @keyframes heartBeat {
-            0% {
-                transform: scale(1);
-            }
-            25% {
-                transform: scale(1.3);
-            }
-            50% {
-                transform: scale(0.95);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
         }
 
-        /* 点赞飘出动画 */
         .float-heart {
             position: absolute;
             pointer-events: none;
@@ -359,21 +360,11 @@
             opacity: 0;
         }
         @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(0.5) rotate(0deg);
-            }
-            40% {
-                opacity: 1;
-                transform: translateY(-60px) scale(1.2) rotate(10deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-140px) scale(0.7) rotate(-15deg);
-            }
+            0% { opacity: 1; transform: translateY(0) scale(0.5) rotate(0deg); }
+            40% { opacity: 1; transform: translateY(-60px) scale(1.2) rotate(10deg); }
+            100% { opacity: 0; transform: translateY(-140px) scale(0.7) rotate(-15deg); }
         }
 
-        /* ============ 底部信息区 ============ */
         .video-info-bar {
             position: absolute;
             left: 16px;
@@ -385,9 +376,7 @@
             flex-direction: column;
             gap: 8px;
         }
-        .video-info-bar>* {
-            pointer-events: auto;
-        }
+        .video-info-bar>* { pointer-events: auto; }
         .video-username {
             font-size: 15px;
             font-weight: 600;
@@ -420,9 +409,7 @@
             overflow: hidden;
             cursor: pointer;
         }
-        .video-description.expanded {
-            -webkit-line-clamp: unset;
-        }
+        .video-description.expanded { -webkit-line-clamp: unset; }
         .video-tags {
             display: flex;
             flex-wrap: wrap;
@@ -447,7 +434,6 @@
             color: #fff;
         }
 
-        /* ============ 底部进度条 ============ */
         .progress-bar-track {
             position: absolute;
             bottom: 4px;
@@ -469,50 +455,7 @@
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
 
-        /* ============ 声音切换按钮 ============ */
-        .sound-toggle {
-            position: absolute;
-            top: 50%;
-            right: 16px;
-            z-index: 30;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-smooth);
-            pointer-events: auto;
-            opacity: 0;
-            animation: fadeInSound 0.5s ease 0.3s forwards;
-        }
-        @keyframes fadeInSound {
-            to {
-                opacity: 1;
-            }
-        }
-        .sound-toggle:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-        .sound-toggle svg {
-            width: 18px;
-            height: 18px;
-            fill: #fff;
-        }
-        .sound-toggle.muted .sound-on {
-            display: none;
-        }
-        .sound-toggle:not(.muted) .sound-off {
-            display: none;
-        }
-
-        /* ============ 空状态 & 加载状态 ============ */
+        /* 状态覆盖层 */
         .state-overlay {
             position: absolute;
             inset: 0;
@@ -526,36 +469,14 @@
             transition: opacity 0.4s ease;
             pointer-events: all;
         }
-        .state-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .state-icon {
-            font-size: 56px;
-            animation: float 3s ease-in-out infinite;
-        }
+        .state-overlay.hidden { opacity: 0; pointer-events: none; }
+        .state-icon { font-size: 56px; animation: float 3s ease-in-out infinite; }
         @keyframes float {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-16px);
-            }
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-16px); }
         }
-        .state-title {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            color: #fff;
-        }
-        .state-subtitle {
-            font-size: 13px;
-            color: var(--text-tertiary);
-            text-align: center;
-            max-width: 280px;
-            line-height: 1.6;
-        }
+        .state-title { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; color: #fff; }
+        .state-subtitle { font-size: 13px; color: var(--text-tertiary); text-align: center; max-width: 280px; line-height: 1.6; }
         .state-btn {
             padding: 12px 28px;
             border-radius: var(--radius-full);
@@ -569,980 +490,741 @@
             transition: all var(--transition-smooth);
             font-family: var(--font-sans);
         }
-        .state-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-        }
-        .state-btn:active {
-            transform: scale(0.95);
-        }
+        .state-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,255,255,0.2); }
+        .state-btn:active { transform: scale(0.95); }
 
-        /* ============ 响应式微调 ============ */
         @media (max-width: 380px) {
-            .action-btn .icon-circle {
-                width: 42px;
-                height: 42px;
-            }
-            .action-btn .icon-circle svg {
-                width: 19px;
-                height: 19px;
-            }
-            .action-btn .action-label {
-                font-size: 11px;
-            }
-            .action-bar {
-                right: 8px;
-                bottom: 140px;
-                gap: 18px;
-            }
-            .video-info-bar {
-                left: 12px;
-                right: 75px;
-                bottom: 32px;
-            }
-            .tab-pill {
-                padding: 7px 14px;
-                font-size: 13px;
-            }
+            .action-btn .icon-circle { width: 42px; height: 42px; }
+            .action-btn .icon-circle svg { width: 19px; height: 19px; }
+            .action-btn .action-label { font-size: 11px; }
+            .action-bar { right: 8px; bottom: 140px; gap: 18px; }
+            .video-info-bar { left: 12px; right: 75px; bottom: 32px; }
+            .tab-pill { padding: 7px 14px; font-size: 13px; }
         }
-
         @media (min-width: 481px) and (max-width: 768px) {
-            .action-bar {
-                right: 20px;
-                bottom: 180px;
-            }
-            .video-info-bar {
-                left: 20px;
-                right: 100px;
-                bottom: 50px;
-            }
+            .action-bar { right: 20px; bottom: 180px; }
+            .video-info-bar { left: 20px; right: 100px; bottom: 50px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container" id="appContainer">
-        <!-- 顶部导航 -->
-        <nav class="top-nav" id="topNav">
-            <div class="tab-scroll" id="tabScroll"></div>
-        </nav>
+<div class="app-container" id="appContainer">
+    <nav class="top-nav" id="topNav">
+        <div class="tab-scroll" id="tabScroll"></div>
+    </nav>
 
-        <!-- 视频滚动容器 -->
-        <div class="video-scroll-container" id="videoScrollContainer"></div>
+    <div class="video-scroll-container" id="videoScrollContainer"></div>
 
-        <!-- 全局声音切换 -->
-        <button class="sound-toggle muted" id="soundToggle" title="切换声音">
-            <svg class="sound-on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-            <svg class="sound-off" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-        </button>
-
-        <!-- 加载状态 -->
-        <div class="state-overlay" id="loadingOverlay">
-            <div class="state-icon">🎬</div>
-            <div class="state-title">正在加载视频列表</div>
-            <div class="state-subtitle">从 GitHub 仓库获取视频中...</div>
-            <div class="loader-spinner" style="margin-top:8px;"></div>
-        </div>
-
-        <!-- 错误状态 -->
-        <div class="state-overlay hidden" id="errorOverlay">
-            <div class="state-icon">😿</div>
-            <div class="state-title">加载失败</div>
-            <div class="state-subtitle" id="errorMessage">无法获取视频列表，请检查网络或仓库设置。</div>
-            <button class="state-btn" id="retryBtn">重新加载</button>
-        </div>
-
-        <!-- 空状态 -->
-        <div class="state-overlay hidden" id="emptyOverlay">
-            <div class="state-icon">📭</div>
-            <div class="state-title">暂无视频</div>
-            <div class="state-subtitle">Video 目录中还没有视频文件，请上传视频后刷新。</div>
-            <button class="state-btn" id="refreshBtn">刷新</button>
-        </div>
+    <!-- 加载状态 -->
+    <div class="state-overlay" id="loadingOverlay">
+        <div class="state-icon">🎬</div>
+        <div class="state-title">正在加载视频列表</div>
+        <div class="state-subtitle">从 GitHub 仓库获取视频中...</div>
+        <div class="loader-spinner" style="margin-top:8px;"></div>
     </div>
 
-    <script>
-        (function() {
-            // ==================== 配置 ====================
-            const CONFIG = {
-                username: 'spacedls',
-                repo: 'dpmhzx',
-                branch: 'main',
-                videoDir: 'Video',
-                // GitHub API 和 Raw URL 模板
-                apiBase: 'https://api.github.com',
-                rawBase: 'https://raw.githubusercontent.com',
-                // 缓存有效期（毫秒）30分钟
-                cacheTTL: 30 * 60 * 1000,
-                // 视频格式扩展名
-                videoExtensions: ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.m4v', '.ogg', '.ogv', '.ts', '.mts',
-                    '.m2ts'
-                ],
-            };
+    <!-- 错误状态 -->
+    <div class="state-overlay hidden" id="errorOverlay">
+        <div class="state-icon">😿</div>
+        <div class="state-title">加载失败</div>
+        <div class="state-subtitle" id="errorMessage">无法获取视频列表，请检查网络或仓库设置。</div>
+        <button class="state-btn" id="retryBtn">重新加载</button>
+    </div>
 
-            // ==================== DOM 引用 ====================
-            const appContainer = document.getElementById('appContainer');
-            const tabScroll = document.getElementById('tabScroll');
-            const videoScrollContainer = document.getElementById('videoScrollContainer');
-            const soundToggle = document.getElementById('soundToggle');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const errorOverlay = document.getElementById('errorOverlay');
-            const errorMessage = document.getElementById('errorMessage');
-            const retryBtn = document.getElementById('retryBtn');
-            const emptyOverlay = document.getElementById('emptyOverlay');
-            const refreshBtn = document.getElementById('refreshBtn');
+    <!-- 空状态 -->
+    <div class="state-overlay hidden" id="emptyOverlay">
+        <div class="state-icon">📭</div>
+        <div class="state-title">暂无视频</div>
+        <div class="state-subtitle">Video 目录中还没有视频文件，请上传视频后刷新。</div>
+        <button class="state-btn" id="refreshBtn">刷新</button>
+    </div>
+</div>
 
-            // ==================== 状态 ====================
-            let allVideos = []; // { name, path, download_url, category, size }
-            let categories = []; // ['全部', '分区1', '分区2', ...]
-            let activeCategory = '全部';
-            let filteredVideos = [];
-            let currentVideoIndex = 0;
-            let isMuted = true;
-            let videoElements = []; // 当前渲染的视频DOM元素引用
-            let observer = null;
-            let scrollTimeout = null;
-            let isScrolling = false;
-            let likedVideos = {}; // 点赞状态持久化
+<script>
+    (function() {
+        // ==================== 配置 ====================
+        const CONFIG = {
+            username: 'spacedls',
+            repo: 'dpmhzx',
+            branch: 'main',
+            videoDir: 'videos',
+            apiBase: 'https://api.github.com',
+            rawBase: 'https://raw.githubusercontent.com',
+            cacheTTL: 30 * 60 * 1000,
+            videoExtensions: ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.m4v', '.ogg', '.ogv', '.ts', '.mts', '.m2ts'],
+        };
 
-            // ==================== 工具函数 ====================
-            function isVideoFile(name) {
-                const lower = name.toLowerCase();
-                return CONFIG.videoExtensions.some(ext => lower.endsWith(ext));
+        const appContainer = document.getElementById('appContainer');
+        const tabScroll = document.getElementById('tabScroll');
+        const videoScrollContainer = document.getElementById('videoScrollContainer');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorOverlay = document.getElementById('errorOverlay');
+        const errorMessage = document.getElementById('errorMessage');
+        const retryBtn = document.getElementById('retryBtn');
+        const emptyOverlay = document.getElementById('emptyOverlay');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        let allVideos = [];
+        let categories = [];
+        let activeCategory = '全部';
+        let filteredVideos = [];
+        let currentVideoIndex = 0;
+        let isMuted = false;   // ✅ 默认开启声音
+        let videoElements = [];
+        let observer = null;
+        let scrollTimeout = null;
+        let isScrolling = false;
+        let likedVideos = {};
+
+        // ==================== 工具函数 ====================
+        function isVideoFile(name) {
+            const lower = name.toLowerCase();
+            return CONFIG.videoExtensions.some(ext => lower.endsWith(ext));
+        }
+        function getVideoNameWithoutExt(name) {
+            const lastDot = name.lastIndexOf('.');
+            return lastDot > 0 ? name.substring(0, lastDot) : name;
+        }
+        function formatVideoTitle(name) {
+            let title = getVideoNameWithoutExt(name);
+            title = title.replace(/[-_]+/g, ' ').trim();
+            if (title.length > 40) title = title.substring(0, 37) + '...';
+            return title || '未命名视频';
+        }
+        function generatePseudoLikes(name) {
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = ((hash << 5) - hash) + name.charCodeAt(i);
+                hash |= 0;
             }
-
-            function getVideoNameWithoutExt(name) {
-                const lastDot = name.lastIndexOf('.');
-                return lastDot > 0 ? name.substring(0, lastDot) : name;
+            return Math.abs(hash) % 9500 + 50;
+        }
+        function generatePseudoComments(name) {
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = ((hash << 3) - hash) + name.charCodeAt(i) * (i + 1);
+                hash |= 0;
             }
+            return Math.abs(hash) % 800 + 3;
+        }
 
-            function formatVideoTitle(name) {
-                let title = getVideoNameWithoutExt(name);
-                // 将连字符、下划线替换为空格
-                title = title.replace(/[-_]+/g, ' ').trim();
-                // 限制长度
-                if (title.length > 40) title = title.substring(0, 37) + '...';
-                return title || '未命名视频';
-            }
-
-            function generatePseudoLikes(name) {
-                // 基于文件名生成稳定的伪随机点赞数
-                let hash = 0;
-                for (let i = 0; i < name.length; i++) {
-                    hash = ((hash << 5) - hash) + name.charCodeAt(i);
-                    hash |= 0;
-                }
-                return Math.abs(hash) % 9500 + 50; // 50-9550
-            }
-
-            function generatePseudoComments(name) {
-                let hash = 0;
-                for (let i = 0; i < name.length; i++) {
-                    hash = ((hash << 3) - hash) + name.charCodeAt(i) * (i + 1);
-                    hash |= 0;
-                }
-                return Math.abs(hash) % 800 + 3; // 3-803
-            }
-
-            // ==================== 缓存管理 ====================
-            function getCacheKey() {
-                return `dpmhzx_video_cache_${CONFIG.username}_${CONFIG.repo}_${CONFIG.videoDir}`;
-            }
-
-            function getCachedData() {
-                try {
-                    const raw = sessionStorage.getItem(getCacheKey());
-                    if (!raw) return null;
-                    const data = JSON.parse(raw);
-                    if (Date.now() - data.timestamp > CONFIG.cacheTTL) {
-                        sessionStorage.removeItem(getCacheKey());
-                        return null;
-                    }
-                    return data;
-                } catch (e) {
+        // ==================== 缓存管理 ====================
+        function getCacheKey() {
+            return `dpmhzx_video_cache_${CONFIG.username}_${CONFIG.repo}_${CONFIG.videoDir}`;
+        }
+        function getCachedData() {
+            try {
+                const raw = sessionStorage.getItem(getCacheKey());
+                if (!raw) return null;
+                const data = JSON.parse(raw);
+                if (Date.now() - data.timestamp > CONFIG.cacheTTL) {
+                    sessionStorage.removeItem(getCacheKey());
                     return null;
                 }
+                return data;
+            } catch (e) { return null; }
+        }
+        function setCachedData(data) {
+            try {
+                sessionStorage.setItem(getCacheKey(), JSON.stringify({
+                    timestamp: Date.now(),
+                    videos: data.videos,
+                    categories: data.categories,
+                }));
+            } catch (e) {}
+        }
+        function getLikedFromStorage() {
+            try { return JSON.parse(localStorage.getItem('dpmhzx_liked_videos')) || {}; } catch (e) { return {}; }
+        }
+        function saveLikedToStorage() {
+            try { localStorage.setItem('dpmhzx_liked_videos', JSON.stringify(likedVideos)); } catch (e) {}
+        }
+
+        // ==================== API 请求 ====================
+        async function fetchDirectoryContents(path) {
+            const url = `${CONFIG.apiBase}/repos/${CONFIG.username}/${CONFIG.repo}/contents/${path}?ref=${CONFIG.branch}`;
+            const response = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
+            if (!response.ok) {
+                if (response.status === 403) throw new Error('API 速率限制，请稍后再试');
+                if (response.status === 404) throw new Error(`目录不存在: ${path}`);
+                throw new Error(`请求失败 (${response.status})`);
+            }
+            return response.json();
+        }
+
+        async function loadAllVideos() {
+            const cached = getCachedData();
+            if (cached && cached.videos && cached.videos.length > 0) {
+                allVideos = cached.videos;
+                categories = cached.categories;
+                return;
             }
 
-            function setCachedData(data) {
-                try {
-                    sessionStorage.setItem(getCacheKey(), JSON.stringify({
-                        timestamp: Date.now(),
-                        videos: data.videos,
-                        categories: data.categories,
-                    }));
-                } catch (e) {
-                    // sessionStorage 可能已满，忽略
-                }
+            const contents = await fetchDirectoryContents(CONFIG.videoDir);
+            if (!Array.isArray(contents) || contents.length === 0) {
+                allVideos = [];
+                categories = ['全部'];
+                return;
             }
 
-            function getLikedFromStorage() {
-                try {
-                    const raw = localStorage.getItem('dpmhzx_liked_videos');
-                    return raw ? JSON.parse(raw) : {};
-                } catch (e) {
-                    return {};
-                }
-            }
+            const videos = [];
+            const categorySet = new Set();
+            const subDirPromises = [];
 
-            function saveLikedToStorage() {
-                try {
-                    localStorage.setItem('dpmhzx_liked_videos', JSON.stringify(likedVideos));
-                } catch (e) {
-                    // 忽略
-                }
-            }
-
-            // ==================== API 请求 ====================
-            async function fetchDirectoryContents(path) {
-                const url = `${CONFIG.apiBase}/repos/${CONFIG.username}/${CONFIG.repo}/contents/${path}?ref=${CONFIG.branch}`;
-                const response = await fetch(url, {
-                    headers: {
-                        'Accept': 'application/vnd.github.v3+json',
-                    },
-                });
-                if (!response.ok) {
-                    if (response.status === 403) throw new Error('API 速率限制，请稍后再试');
-                    if (response.status === 404) throw new Error(`目录不存在: ${path}`);
-                    throw new Error(`请求失败 (${response.status})`);
-                }
-                return response.json();
-            }
-
-            async function loadAllVideos() {
-                // 检查缓存
-                const cached = getCachedData();
-                if (cached && cached.videos && cached.videos.length > 0) {
-                    allVideos = cached.videos;
-                    categories = cached.categories;
-                    return;
-                }
-
-                // 获取 Video 目录内容
-                const contents = await fetchDirectoryContents(CONFIG.videoDir);
-                if (!Array.isArray(contents) || contents.length === 0) {
-                    allVideos = [];
-                    categories = ['全部'];
-                    return;
-                }
-
-                const videos = [];
-                const categorySet = new Set();
-                const subDirPromises = [];
-
-                for (const item of contents) {
-                    if (item.type === 'file' && isVideoFile(item.name)) {
-                        // Video 根目录下的视频文件
-                        videos.push({
-                            name: item.name,
-                            path: item.path,
-                            download_url: item.download_url,
-                            category: '推荐',
-                            size: item.size || 0,
-                        });
-                        categorySet.add('推荐');
-                    } else if (item.type === 'dir') {
-                        // 子目录作为分区
-                        const dirName = item.name;
-                        categorySet.add(dirName);
-                        subDirPromises.push(
-                            fetchDirectoryContents(item.path)
-                            .then(subContents => {
-                                if (Array.isArray(subContents)) {
-                                    for (const subItem of subContents) {
-                                        if (subItem.type === 'file' && isVideoFile(subItem.name)) {
-                                            videos.push({
-                                                name: subItem.name,
-                                                path: subItem.path,
-                                                download_url: subItem.download_url,
-                                                category: dirName,
-                                                size: subItem.size || 0,
-                                            });
-                                        }
+            for (const item of contents) {
+                if (item.type === 'file' && isVideoFile(item.name)) {
+                    videos.push({
+                        name: item.name,
+                        path: item.path,
+                        download_url: item.download_url,
+                        category: '推荐',
+                        size: item.size || 0,
+                    });
+                    categorySet.add('推荐');
+                } else if (item.type === 'dir') {
+                    const dirName = item.name;
+                    categorySet.add(dirName);
+                    subDirPromises.push(
+                        fetchDirectoryContents(item.path)
+                        .then(subContents => {
+                            if (Array.isArray(subContents)) {
+                                for (const subItem of subContents) {
+                                    if (subItem.type === 'file' && isVideoFile(subItem.name)) {
+                                        videos.push({
+                                            name: subItem.name,
+                                            path: subItem.path,
+                                            download_url: subItem.download_url,
+                                            category: dirName,
+                                            size: subItem.size || 0,
+                                        });
                                     }
                                 }
-                            })
-                            .catch(err => {
-                                console.warn(`无法加载子目录 "${dirName}":`, err.message);
-                            })
-                        );
-                    }
-                }
-
-                // 等待所有子目录加载完成
-                await Promise.allSettled(subDirPromises);
-
-                allVideos = videos;
-                categories = ['全部', ...Array.from(categorySet).sort()];
-
-                // 缓存数据
-                if (allVideos.length > 0) {
-                    setCachedData({ videos: allVideos, categories });
+                            }
+                        })
+                        .catch(err => console.warn(`无法加载子目录 "${dirName}":`, err.message))
+                    );
                 }
             }
 
-            // ==================== UI 渲染 ====================
-            function renderTabs() {
-                tabScroll.innerHTML = '';
-                categories.forEach(cat => {
-                    const pill = document.createElement('span');
-                    pill.className = 'tab-pill' + (cat === activeCategory ? ' active' : '');
-                    pill.textContent = cat;
-                    pill.innerHTML += '<span class="count-dot"></span>';
-                    pill.addEventListener('click', () => switchCategory(cat));
-                    tabScroll.appendChild(pill);
-                });
+            await Promise.allSettled(subDirPromises);
+            allVideos = videos;
+            categories = ['全部', ...Array.from(categorySet).sort()];
+            if (allVideos.length > 0) {
+                setCachedData({ videos: allVideos, categories });
+            }
+        }
 
-                // 滚动到激活的标签
-                requestAnimationFrame(() => {
-                    const activePill = tabScroll.querySelector('.tab-pill.active');
-                    if (activePill) {
-                        activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }
-                });
+        // ==================== UI 渲染 ====================
+        function renderTabs() {
+            tabScroll.innerHTML = '';
+            categories.forEach(cat => {
+                const pill = document.createElement('span');
+                pill.className = 'tab-pill' + (cat === activeCategory ? ' active' : '');
+                pill.textContent = cat;
+                pill.innerHTML += '<span class="count-dot"></span>';
+                pill.addEventListener('click', () => switchCategory(cat));
+                tabScroll.appendChild(pill);
+            });
+            requestAnimationFrame(() => {
+                const activePill = tabScroll.querySelector('.tab-pill.active');
+                if (activePill) activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            });
+        }
+
+        function filterVideosByCategory() {
+            if (activeCategory === '全部') filteredVideos = [...allVideos];
+            else filteredVideos = allVideos.filter(v => v.category === activeCategory);
+            currentVideoIndex = 0;
+        }
+
+        function renderVideoList() {
+            filterVideosByCategory();
+            videoScrollContainer.innerHTML = '';
+            videoElements = [];
+
+            if (filteredVideos.length === 0) {
+                showEmptyState();
+                return;
             }
 
-            function filterVideosByCategory() {
-                if (activeCategory === '全部') {
-                    filteredVideos = [...allVideos];
-                } else {
-                    filteredVideos = allVideos.filter(v => v.category === activeCategory);
-                }
-                currentVideoIndex = 0;
-            }
+            hideAllOverlays();
 
-            function renderVideoList() {
-                filterVideosByCategory();
-                videoScrollContainer.innerHTML = '';
-                videoElements = [];
+            filteredVideos.forEach((video, index) => {
+                const panel = createVideoPanel(video, index);
+                videoScrollContainer.appendChild(panel);
+            });
 
-                if (filteredVideos.length === 0) {
-                    showEmptyState();
-                    return;
-                }
+            videoElements = Array.from(videoScrollContainer.querySelectorAll('.video-panel video'));
+            setupIntersectionObserver();
+            videoScrollContainer.scrollTop = 0;
+            currentVideoIndex = 0;
+            setTimeout(() => playVideoAtIndex(0), 300);
+        }
 
-                hideAllOverlays();
+        function createVideoPanel(video, index) {
+            const panel = document.createElement('div');
+            panel.className = 'video-panel';
+            panel.setAttribute('data-index', index);
+            panel.setAttribute('data-video-name', video.name);
 
-                filteredVideos.forEach((video, index) => {
-                    const panel = createVideoPanel(video, index);
-                    videoScrollContainer.appendChild(panel);
-                });
+            const videoEl = document.createElement('video');
+            videoEl.src = video.download_url;
+            videoEl.setAttribute('playsinline', '');
+            videoEl.setAttribute('webkit-playsinline', '');
+            videoEl.setAttribute('loop', '');
+            videoEl.setAttribute('preload', index <= 2 ? 'auto' : 'metadata');
+            videoEl.muted = isMuted;
+            videoEl.setAttribute('x-webkit-airplay', 'allow');
+            videoEl.style.cssText = 'width:100%;height:100%;object-fit:cover;';
 
-                // 收集所有视频元素引用
-                videoElements = Array.from(videoScrollContainer.querySelectorAll('.video-panel video'));
+            const loader = document.createElement('div');
+            loader.className = 'video-loader';
+            loader.innerHTML = '<div class="loader-spinner"></div>';
 
-                // 重新设置 Intersection Observer
-                setupIntersectionObserver();
+            const playOverlay = document.createElement('div');
+            playOverlay.className = 'play-overlay hidden';
+            playOverlay.innerHTML = `<div class="play-icon-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>`;
 
-                // 滚动到顶部
-                videoScrollContainer.scrollTop = 0;
-                currentVideoIndex = 0;
+            // 视频错误覆盖层
+            const errorOverlay = document.createElement('div');
+            errorOverlay.className = 'video-error-overlay';
+            errorOverlay.innerHTML = `<span>⚠️</span><p>视频暂时无法播放</p><button class="retry-video-btn">重试</button>`;
+            const retryBtn = errorOverlay.querySelector('.retry-video-btn');
+            retryBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                errorOverlay.classList.remove('show');
+                loader.classList.remove('hidden');
+                videoEl.load();
+                videoEl.play().catch(() => {});
+            });
 
-                // 短暂延迟后播放第一个视频
-                setTimeout(() => {
-                    playVideoAtIndex(0);
-                }, 300);
-            }
+            const actionBar = document.createElement('div');
+            actionBar.className = 'action-bar';
+            const likeCount = generatePseudoLikes(video.name);
+            const commentCount = generatePseudoComments(video.name);
+            const isLiked = !!likedVideos[video.name];
+            actionBar.innerHTML = `
+                <div class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-video-name="${video.name}">
+                    <div class="icon-circle"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                    <span class="action-label">${formatCount(likeCount)}</span>
+                </div>
+                <div class="action-btn comment-btn">
+                    <div class="icon-circle"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+                    <span class="action-label">${formatCount(commentCount)}</span>
+                </div>
+                <div class="action-btn share-btn">
+                    <div class="icon-circle"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></div>
+                    <span class="action-label">分享</span>
+                </div>
+                <div class="action-btn save-btn" data-video-name="${video.name}">
+                    <div class="icon-circle"><svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg></div>
+                    <span class="action-label">收藏</span>
+                </div>`;
 
-            function createVideoPanel(video, index) {
-                const panel = document.createElement('div');
-                panel.className = 'video-panel';
-                panel.setAttribute('data-index', index);
-                panel.setAttribute('data-video-name', video.name);
+            const infoBar = document.createElement('div');
+            infoBar.className = 'video-info-bar';
+            const videoTitle = formatVideoTitle(video.name);
+            infoBar.innerHTML = `
+                <div class="video-username">@${CONFIG.username}<span class="verified-badge">✓</span></div>
+                <div class="video-description" title="点击展开">${escapeHtml(videoTitle)}</div>
+                <div class="video-tags">
+                    <span class="video-tag">#${escapeHtml(video.category)}</span>
+                    <span class="video-tag">#DPMHZX</span>
+                </div>`;
 
-                // 视频元素
-                const videoEl = document.createElement('video');
-                videoEl.src = video.download_url;
-                videoEl.setAttribute('playsinline', '');
-                videoEl.setAttribute('webkit-playsinline', '');
-                videoEl.setAttribute('loop', '');
-                videoEl.setAttribute('preload', index <= 2 ? 'auto' : 'metadata');
-                videoEl.muted = isMuted;
-                videoEl.setAttribute('x-webkit-airplay', 'allow');
-                videoEl.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar-track';
+            progressBar.innerHTML = '<div class="progress-bar-fill"></div>';
 
-                // 加载指示器
-                const loader = document.createElement('div');
-                loader.className = 'video-loader';
-                loader.innerHTML = '<div class="loader-spinner"></div>';
+            panel.appendChild(videoEl);
+            panel.appendChild(loader);
+            panel.appendChild(playOverlay);
+            panel.appendChild(errorOverlay);
+            panel.appendChild(actionBar);
+            panel.appendChild(infoBar);
+            panel.appendChild(progressBar);
 
-                // 播放覆盖层
-                const playOverlay = document.createElement('div');
-                playOverlay.className = 'play-overlay hidden';
-                playOverlay.innerHTML = `
-                    <div class="play-icon-circle">
-                        <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-                    </div>`;
-
-                // 右侧互动按钮组
-                const actionBar = document.createElement('div');
-                actionBar.className = 'action-bar';
-                const likeCount = generatePseudoLikes(video.name);
-                const commentCount = generatePseudoComments(video.name);
-                const isLiked = !!likedVideos[video.name];
-                actionBar.innerHTML = `
-                    <div class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-video-name="${video.name}">
-                        <div class="icon-circle">
-                            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                        </div>
-                        <span class="action-label">${formatCount(likeCount)}</span>
-                    </div>
-                    <div class="action-btn comment-btn">
-                        <div class="icon-circle">
-                            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                        </div>
-                        <span class="action-label">${formatCount(commentCount)}</span>
-                    </div>
-                    <div class="action-btn share-btn">
-                        <div class="icon-circle">
-                            <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
-                        </div>
-                        <span class="action-label">分享</span>
-                    </div>
-                    <div class="action-btn save-btn" data-video-name="${video.name}">
-                        <div class="icon-circle">
-                            <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-                        </div>
-                        <span class="action-label">收藏</span>
-                    </div>`;
-
-                // 底部信息区
-                const infoBar = document.createElement('div');
-                infoBar.className = 'video-info-bar';
-                const videoTitle = formatVideoTitle(video.name);
-                infoBar.innerHTML = `
-                    <div class="video-username">
-                        @${CONFIG.username}
-                        <span class="verified-badge">✓</span>
-                    </div>
-                    <div class="video-description" title="点击展开">${escapeHtml(videoTitle)}</div>
-                    <div class="video-tags">
-                        <span class="video-tag">#${escapeHtml(video.category)}</span>
-                        <span class="video-tag">#DPMHZX</span>
-                    </div>`;
-
-                // 进度条
-                const progressBar = document.createElement('div');
-                progressBar.className = 'progress-bar-track';
-                progressBar.innerHTML = '<div class="progress-bar-fill"></div>';
-
-                // 组装
-                panel.appendChild(videoEl);
-                panel.appendChild(loader);
-                panel.appendChild(playOverlay);
-                panel.appendChild(actionBar);
-                panel.appendChild(infoBar);
-                panel.appendChild(progressBar);
-
-                // --- 事件绑定 ---
-
-                // 视频加载事件
-                videoEl.addEventListener('loadeddata', () => {
-                    loader.classList.add('hidden');
-                });
-                videoEl.addEventListener('waiting', () => {
-                    loader.classList.remove('hidden');
-                });
-                videoEl.addEventListener('playing', () => {
-                    loader.classList.add('hidden');
-                    playOverlay.classList.add('hidden');
-                    playOverlay.classList.remove('visible');
-                });
-                videoEl.addEventListener('pause', () => {
-                    if (videoEl.readyState >= 2) {
-                        playOverlay.classList.add('visible');
-                        playOverlay.classList.remove('hidden');
-                    }
-                });
-                videoEl.addEventListener('ended', () => {
-                    // loop 会自动重播，这里做进度条重置
-                    const fill = panel.querySelector('.progress-bar-fill');
-                    if (fill) fill.style.width = '0%';
-                });
-                videoEl.addEventListener('timeupdate', () => {
-                    if (videoEl.duration && isFinite(videoEl.duration)) {
-                        const pct = (videoEl.currentTime / videoEl.duration) * 100;
-                        const fill = panel.querySelector('.progress-bar-fill');
-                        if (fill) fill.style.width = pct + '%';
-                    }
-                });
-                videoEl.addEventListener('error', () => {
-                    loader.classList.add('hidden');
-                    console.warn('视频加载失败:', video.name);
-                });
-
-                // 点击视频切换播放/暂停
-                videoEl.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    togglePlayPause(videoEl, playOverlay);
-                });
-                panel.addEventListener('click', (e) => {
-                    // 如果点击的不是按钮，切换播放/暂停
-                    if (!e.target.closest('.action-btn') && !e.target.closest('.video-tag') && !e.target
-                        .closest('.video-description')) {
-                        togglePlayPause(videoEl, playOverlay);
-                    }
-                });
-
-                // 双击点赞
-                panel.addEventListener('dblclick', (e) => {
-                    if (e.target.closest('.action-btn')) return;
-                    triggerLike(panel, video);
-                });
-
-                // 点赞按钮
-                const likeBtn = actionBar.querySelector('.like-btn');
-                likeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    triggerLike(panel, video, likeBtn);
-                });
-
-                // 评论按钮
-                const commentBtn = actionBar.querySelector('.comment-btn');
-                commentBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showToast('💬 评论功能即将上线');
-                });
-
-                // 分享按钮
-                const shareBtn = actionBar.querySelector('.share-btn');
-                shareBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    copyShareLink(video);
-                });
-
-                // 收藏按钮
-                const saveBtn = actionBar.querySelector('.save-btn');
-                saveBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const iconCircle = saveBtn.querySelector('.icon-circle');
-                    iconCircle.style.background = 'rgba(255,215,0,0.7)';
-                    iconCircle.style.borderColor = 'rgba(255,215,0,0.9)';
-                    setTimeout(() => {
-                        iconCircle.style.background = '';
-                        iconCircle.style.borderColor = '';
-                    }, 600);
-                    showToast('⭐ 已收藏');
-                });
-
-                // 描述展开
-                const descEl = infoBar.querySelector('.video-description');
-                descEl.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    descEl.classList.toggle('expanded');
-                });
-
-                // 标签点击
-                const tagEls = infoBar.querySelectorAll('.video-tag');
-                tagEls.forEach(tag => {
-                    tag.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const tagText = tag.textContent.replace('#', '').trim();
-                        if (categories.includes(tagText)) {
-                            switchCategory(tagText);
-                        }
-                    });
-                });
-
-                return panel;
-            }
-
-            function togglePlayPause(videoEl, playOverlay) {
-                if (videoEl.paused) {
-                    videoEl.play().catch(() => {});
-                    playOverlay.classList.add('hidden');
-                    playOverlay.classList.remove('visible');
-                } else {
-                    videoEl.pause();
+            // --- 视频事件 ---
+            videoEl.addEventListener('loadeddata', () => {
+                loader.classList.add('hidden');
+                errorOverlay.classList.remove('show');
+            });
+            videoEl.addEventListener('waiting', () => loader.classList.remove('hidden'));
+            videoEl.addEventListener('playing', () => {
+                loader.classList.add('hidden');
+                playOverlay.classList.add('hidden');
+                playOverlay.classList.remove('visible');
+                errorOverlay.classList.remove('show');
+            });
+            videoEl.addEventListener('pause', () => {
+                if (videoEl.readyState >= 2) {
                     playOverlay.classList.add('visible');
                     playOverlay.classList.remove('hidden');
                 }
-            }
-
-            function triggerLike(panel, video, likeBtnEl) {
-                const likeBtn = likeBtnEl || panel.querySelector('.like-btn');
-                const wasLiked = likeBtn.classList.contains('liked');
-
-                if (!wasLiked) {
-                    likeBtn.classList.add('liked');
-                    likedVideos[video.name] = true;
-                    // 更新计数
-                    const label = likeBtn.querySelector('.action-label');
-                    const currentCount = generatePseudoLikes(video.name);
-                    label.textContent = formatCount(currentCount + 1);
-                    // 飘出爱心
-                    spawnFloatingHeart(panel, likeBtn);
-                } else {
-                    likeBtn.classList.remove('liked');
-                    delete likedVideos[video.name];
-                    const label = likeBtn.querySelector('.action-label');
-                    label.textContent = formatCount(generatePseudoLikes(video.name));
+            });
+            videoEl.addEventListener('ended', () => {
+                const fill = panel.querySelector('.progress-bar-fill');
+                if (fill) fill.style.width = '0%';
+            });
+            videoEl.addEventListener('timeupdate', () => {
+                if (videoEl.duration && isFinite(videoEl.duration)) {
+                    const pct = (videoEl.currentTime / videoEl.duration) * 100;
+                    const fill = panel.querySelector('.progress-bar-fill');
+                    if (fill) fill.style.width = pct + '%';
                 }
-                saveLikedToStorage();
-            }
+            });
+            videoEl.addEventListener('error', () => {
+                loader.classList.add('hidden');
+                errorOverlay.classList.add('show');
+                console.warn('视频加载失败:', video.name);
+            });
 
-            function spawnFloatingHeart(panel, likeBtn) {
-                const heart = document.createElement('span');
-                heart.className = 'float-heart';
-                heart.textContent = '❤️';
-                const btnRect = likeBtn.getBoundingClientRect();
-                const panelRect = panel.getBoundingClientRect();
-                heart.style.left = (btnRect.left - panelRect.left + btnRect.width / 2 - 14) + 'px';
-                heart.style.top = (btnRect.top - panelRect.top) + 'px';
-                panel.appendChild(heart);
-                heart.addEventListener('animationend', () => heart.remove());
-            }
-
-            function copyShareLink(video) {
-                const shareUrl = `${CONFIG.rawBase}/${CONFIG.username}/${CONFIG.repo}/${CONFIG.branch}/${video.path}`;
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(shareUrl).then(() => {
-                        showToast('📋 视频链接已复制');
-                    }).catch(() => {
-                        fallbackCopy(shareUrl);
-                    });
-                } else {
-                    fallbackCopy(shareUrl);
+            // 点击切换播放/暂停
+            videoEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                togglePlayPause(videoEl, playOverlay);
+            });
+            panel.addEventListener('click', (e) => {
+                if (!e.target.closest('.action-btn') && !e.target.closest('.video-tag') && !e.target.closest('.video-description') && !e.target.closest('.video-error-overlay')) {
+                    togglePlayPause(videoEl, playOverlay);
                 }
+            });
+
+            // 双击点赞
+            panel.addEventListener('dblclick', (e) => {
+                if (e.target.closest('.action-btn') || e.target.closest('.video-error-overlay')) return;
+                triggerLike(panel, video);
+            });
+
+            // 点赞按钮
+            const likeBtn = actionBar.querySelector('.like-btn');
+            likeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                triggerLike(panel, video, likeBtn);
+            });
+
+            // 评论
+            actionBar.querySelector('.comment-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                showToast('💬 评论功能即将上线');
+            });
+
+            // 分享
+            actionBar.querySelector('.share-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                copyShareLink(video);
+            });
+
+            // 收藏
+            actionBar.querySelector('.save-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const iconCircle = actionBar.querySelector('.save-btn .icon-circle');
+                iconCircle.style.background = 'rgba(255,215,0,0.7)';
+                iconCircle.style.borderColor = 'rgba(255,215,0,0.9)';
+                setTimeout(() => { iconCircle.style.background = ''; iconCircle.style.borderColor = ''; }, 600);
+                showToast('⭐ 已收藏');
+            });
+
+            // 描述展开
+            const descEl = infoBar.querySelector('.video-description');
+            descEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                descEl.classList.toggle('expanded');
+            });
+
+            // 标签点击
+            infoBar.querySelectorAll('.video-tag').forEach(tag => {
+                tag.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const tagText = tag.textContent.replace('#', '').trim();
+                    if (categories.includes(tagText)) switchCategory(tagText);
+                });
+            });
+
+            return panel;
+        }
+
+        function togglePlayPause(videoEl, playOverlay) {
+            if (videoEl.paused) {
+                videoEl.play().catch(() => {});
+                playOverlay.classList.add('hidden');
+                playOverlay.classList.remove('visible');
+            } else {
+                videoEl.pause();
+                playOverlay.classList.add('visible');
+                playOverlay.classList.remove('hidden');
             }
+        }
 
-            function fallbackCopy(text) {
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                ta.style.position = 'fixed';
-                ta.style.left = '-9999px';
-                ta.style.top = '-9999px';
-                document.body.appendChild(ta);
-                ta.focus();
-                ta.select();
-                try { document.execCommand('copy');
-                    showToast('📋 视频链接已复制'); } catch (e) { showToast('⚠️ 复制失败，请手动复制'); }
-                document.body.removeChild(ta);
+        function triggerLike(panel, video, likeBtnEl) {
+            const likeBtn = likeBtnEl || panel.querySelector('.like-btn');
+            const wasLiked = likeBtn.classList.contains('liked');
+            if (!wasLiked) {
+                likeBtn.classList.add('liked');
+                likedVideos[video.name] = true;
+                const label = likeBtn.querySelector('.action-label');
+                label.textContent = formatCount(generatePseudoLikes(video.name) + 1);
+                spawnFloatingHeart(panel, likeBtn);
+            } else {
+                likeBtn.classList.remove('liked');
+                delete likedVideos[video.name];
+                const label = likeBtn.querySelector('.action-label');
+                label.textContent = formatCount(generatePseudoLikes(video.name));
             }
+            saveLikedToStorage();
+        }
 
-            function showToast(message) {
-                let toast = document.querySelector('.global-toast');
-                if (!toast) {
-                    toast = document.createElement('div');
-                    toast.className = 'global-toast';
-                    toast.style.cssText = `
-                        position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-                        background: rgba(0,0,0,0.85); color: #fff; padding: 10px 22px;
-                        border-radius: 24px; font-size: 13px; z-index: 999;
-                        pointer-events: none; transition: all 0.35s ease;
-                        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-                        border: 1px solid rgba(255,255,255,0.2);
-                        opacity: 0; letter-spacing: 0.3px;
-                    `;
-                    document.body.appendChild(toast);
-                }
-                toast.textContent = message;
-                toast.style.opacity = '1';
-                toast.style.transform = 'translateX(-50%) translateY(0)';
-                clearTimeout(toast._timeout);
-                toast._timeout = setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(-50%) translateY(20px)';
-                }, 1800);
+        function spawnFloatingHeart(panel, likeBtn) {
+            const heart = document.createElement('span');
+            heart.className = 'float-heart';
+            heart.textContent = '❤️';
+            const btnRect = likeBtn.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
+            heart.style.left = (btnRect.left - panelRect.left + btnRect.width/2 - 14) + 'px';
+            heart.style.top = (btnRect.top - panelRect.top) + 'px';
+            panel.appendChild(heart);
+            heart.addEventListener('animationend', () => heart.remove());
+        }
+
+        function copyShareLink(video) {
+            const shareUrl = `${CONFIG.rawBase}/${CONFIG.username}/${CONFIG.repo}/${CONFIG.branch}/${video.path}`;
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(shareUrl).then(() => showToast('📋 视频链接已复制')).catch(() => fallbackCopy(shareUrl));
+            } else fallbackCopy(shareUrl);
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); showToast('📋 视频链接已复制'); } catch (e) { showToast('⚠️ 复制失败，请手动复制'); }
+            document.body.removeChild(ta);
+        }
+
+        function showToast(message) {
+            let toast = document.querySelector('.global-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'global-toast';
+                toast.style.cssText = `
+                    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+                    background: rgba(0,0,0,0.85); color: #fff; padding: 10px 22px;
+                    border-radius: 24px; font-size: 13px; z-index: 999;
+                    pointer-events: none; transition: all 0.35s ease;
+                    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                    border: 1px solid rgba(255,255,255,0.2);
+                    opacity: 0; letter-spacing: 0.3px;
+                `;
+                document.body.appendChild(toast);
             }
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(20px)';
+            }, 1800);
+        }
 
-            function formatCount(num) {
-                if (num >= 10000) return (num / 10000).toFixed(1) + 'w';
-                if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
-                return num.toString();
-            }
+        function formatCount(num) {
+            if (num >= 10000) return (num/10000).toFixed(1)+'w';
+            if (num >= 1000) return (num/1000).toFixed(1)+'k';
+            return num.toString();
+        }
 
-            function escapeHtml(str) {
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            }
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
 
-            // ==================== Intersection Observer ====================
-            function setupIntersectionObserver() {
-                if (observer) observer.disconnect();
-
-                const options = {
-                    root: videoScrollContainer,
-                    rootMargin: '0px',
-                    threshold: 0.65,
-                };
-
-                observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        const panel = entry.target;
-                        const videoEl = panel.querySelector('video');
-                        const index = parseInt(panel.getAttribute('data-index'));
-
-                        if (entry.isIntersecting && entry.intersectionRatio >= 0.65) {
-                            // 这是当前活跃的视频
-                            if (currentVideoIndex !== index) {
-                                // 暂停之前的视频
-                                pauseAllVideosExcept(index);
-                                currentVideoIndex = index;
-                            }
-                            if (videoEl && videoEl.paused) {
-                                videoEl.play().catch(() => {
-                                    // 自动播放被阻止，显示播放按钮
-                                    const overlay = panel.querySelector('.play-overlay');
-                                    if (overlay) {
-                                        overlay.classList.add('visible');
-                                        overlay.classList.remove('hidden');
-                                    }
-                                });
-                            }
-                            // 预加载下一个视频
-                            preloadAdjacentVideos(index);
-                        } else if (entry.intersectionRatio < 0.3) {
-                            // 离开视口较远，暂停
-                            if (videoEl && !videoEl.paused && currentVideoIndex !== index) {
-                                videoEl.pause();
-                            }
+        // ==================== Observer ====================
+        function setupIntersectionObserver() {
+            if (observer) observer.disconnect();
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const panel = entry.target;
+                    const videoEl = panel.querySelector('video');
+                    const index = parseInt(panel.getAttribute('data-index'));
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.65) {
+                        if (currentVideoIndex !== index) {
+                            pauseAllVideosExcept(index);
+                            currentVideoIndex = index;
                         }
-                    });
-                }, options);
-
-                // 观察所有视频面板
-                const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                panels.forEach(panel => observer.observe(panel));
-            }
-
-            function pauseAllVideosExcept(activeIndex) {
-                const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                panels.forEach(panel => {
-                    const idx = parseInt(panel.getAttribute('data-index'));
-                    if (idx !== activeIndex) {
-                        const videoEl = panel.querySelector('video');
-                        if (videoEl && !videoEl.paused) {
+                        if (videoEl && videoEl.paused) {
+                            videoEl.play().catch(() => {
+                                // 自动播放被阻止，显示播放按钮（不自动静音，保留用户主动开启声音的机会）
+                                const overlay = panel.querySelector('.play-overlay');
+                                if (overlay) {
+                                    overlay.classList.add('visible');
+                                    overlay.classList.remove('hidden');
+                                }
+                            });
+                        }
+                        preloadAdjacentVideos(index);
+                    } else if (entry.intersectionRatio < 0.3) {
+                        if (videoEl && !videoEl.paused && currentVideoIndex !== index) {
                             videoEl.pause();
                         }
                     }
                 });
-            }
+            }, { root: videoScrollContainer, rootMargin: '0px', threshold: 0.65 });
 
-            function playVideoAtIndex(index) {
-                const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                const targetPanel = panels[index];
-                if (targetPanel) {
-                    const videoEl = targetPanel.querySelector('video');
-                    if (videoEl) {
-                        videoEl.play().catch(() => {});
-                        currentVideoIndex = index;
-                        pauseAllVideosExcept(index);
-                    }
+            videoScrollContainer.querySelectorAll('.video-panel').forEach(panel => observer.observe(panel));
+        }
+
+        function pauseAllVideosExcept(activeIndex) {
+            videoScrollContainer.querySelectorAll('.video-panel').forEach(panel => {
+                const idx = parseInt(panel.getAttribute('data-index'));
+                if (idx !== activeIndex) {
+                    const videoEl = panel.querySelector('video');
+                    if (videoEl && !videoEl.paused) videoEl.pause();
+                }
+            });
+        }
+
+        function playVideoAtIndex(index) {
+            const panels = videoScrollContainer.querySelectorAll('.video-panel');
+            const targetPanel = panels[index];
+            if (targetPanel) {
+                const videoEl = targetPanel.querySelector('video');
+                if (videoEl) {
+                    videoEl.play().catch(() => {});
+                    currentVideoIndex = index;
+                    pauseAllVideosExcept(index);
                 }
             }
+        }
 
-            function preloadAdjacentVideos(currentIndex) {
-                const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                const nextIndex = currentIndex + 1;
-                const prevIndex = currentIndex - 1;
-                [nextIndex, prevIndex].forEach(idx => {
-                    if (idx >= 0 && idx < panels.length) {
-                        const videoEl = panels[idx].querySelector('video');
-                        if (videoEl && videoEl.getAttribute('preload') !== 'auto') {
-                            videoEl.setAttribute('preload', 'auto');
-                            videoEl.load();
-                        }
+        function preloadAdjacentVideos(currentIndex) {
+            const panels = videoScrollContainer.querySelectorAll('.video-panel');
+            [currentIndex+1, currentIndex-1].forEach(idx => {
+                if (idx >= 0 && idx < panels.length) {
+                    const videoEl = panels[idx].querySelector('video');
+                    if (videoEl && videoEl.getAttribute('preload') !== 'auto') {
+                        videoEl.setAttribute('preload', 'auto');
+                        videoEl.load();
                     }
-                });
-            }
+                }
+            });
+        }
 
-            // ==================== 分类切换 ====================
-            function switchCategory(category) {
-                if (activeCategory === category) return;
-                activeCategory = category;
+        // ==================== 分类切换 ====================
+        function switchCategory(category) {
+            if (activeCategory === category) return;
+            activeCategory = category;
+            renderTabs();
+            filterVideosByCategory();
+            videoScrollContainer.innerHTML = '';
+            if (filteredVideos.length === 0) {
+                videoScrollContainer.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:rgba(255,255,255,0.5);"><span style="font-size:48px;">📂</span><span style="font-size:15px;">该分区暂无视频</span></div>`;
+                return;
+            }
+            filteredVideos.forEach((video, index) => {
+                videoScrollContainer.appendChild(createVideoPanel(video, index));
+            });
+            videoElements = Array.from(videoScrollContainer.querySelectorAll('.video-panel video'));
+            setupIntersectionObserver();
+            videoScrollContainer.scrollTop = 0;
+            currentVideoIndex = 0;
+            setTimeout(() => playVideoAtIndex(0), 300);
+        }
+
+        // ==================== 键盘控制 ====================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'j') {
+                e.preventDefault();
+                const panels = videoScrollContainer.querySelectorAll('.video-panel');
+                if (currentVideoIndex < panels.length-1) panels[currentVideoIndex+1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else if (e.key === 'ArrowUp' || e.key === 'k') {
+                e.preventDefault();
+                const panels = videoScrollContainer.querySelectorAll('.video-panel');
+                if (currentVideoIndex > 0) panels[currentVideoIndex-1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                const panels = videoScrollContainer.querySelectorAll('.video-panel');
+                if (panels[currentVideoIndex]) {
+                    const videoEl = panels[currentVideoIndex].querySelector('video');
+                    const playOverlay = panels[currentVideoIndex].querySelector('.play-overlay');
+                    if (videoEl) togglePlayPause(videoEl, playOverlay);
+                }
+            }
+        });
+
+        // ==================== 状态覆盖层 ====================
+        function showLoadingState() {
+            loadingOverlay.classList.remove('hidden');
+            errorOverlay.classList.add('hidden');
+            emptyOverlay.classList.add('hidden');
+        }
+        function showErrorState(message) {
+            loadingOverlay.classList.add('hidden');
+            errorOverlay.classList.remove('hidden');
+            emptyOverlay.classList.add('hidden');
+            errorMessage.textContent = message || '无法获取视频列表，请检查网络或仓库设置。';
+        }
+        function showEmptyState() {
+            loadingOverlay.classList.add('hidden');
+            errorOverlay.classList.add('hidden');
+            emptyOverlay.classList.remove('hidden');
+        }
+        function hideAllOverlays() {
+            loadingOverlay.classList.add('hidden');
+            errorOverlay.classList.add('hidden');
+            emptyOverlay.classList.add('hidden');
+        }
+
+        // ==================== 初始化 ====================
+        async function init() {
+            showLoadingState();
+            likedVideos = getLikedFromStorage();
+            try {
+                await loadAllVideos();
+            } catch (err) {
+                console.error('加载视频列表失败:', err);
+                showErrorState(err.message);
+                return;
+            }
+            if (allVideos.length === 0) {
+                showEmptyState();
                 renderTabs();
-                filterVideosByCategory();
-                videoScrollContainer.innerHTML = '';
-                videoElements = [];
-
-                if (filteredVideos.length === 0) {
-                    // 该分类下无视频，显示提示
-                    videoScrollContainer.innerHTML = `
-                        <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:rgba(255,255,255,0.5);">
-                            <span style="font-size:48px;">📂</span>
-                            <span style="font-size:15px;">该分区暂无视频</span>
-                        </div>`;
-                    return;
-                }
-
-                filteredVideos.forEach((video, index) => {
-                    const panel = createVideoPanel(video, index);
-                    videoScrollContainer.appendChild(panel);
-                });
-                videoElements = Array.from(videoScrollContainer.querySelectorAll('.video-panel video'));
-                setupIntersectionObserver();
-                videoScrollContainer.scrollTop = 0;
-                currentVideoIndex = 0;
-                setTimeout(() => playVideoAtIndex(0), 300);
+                return;
             }
+            hideAllOverlays();
+            renderTabs();
+            renderVideoList();
+            // ✅ 默认声音已开启，无静音按钮
+        }
 
-            // ==================== 声音控制 ====================
-            soundToggle.addEventListener('click', () => {
-                isMuted = !isMuted;
-                if (isMuted) {
-                    soundToggle.classList.add('muted');
-                } else {
-                    soundToggle.classList.remove('muted');
-                }
-                // 更新所有视频的静音状态
-                const allVideos = videoScrollContainer.querySelectorAll('video');
-                allVideos.forEach(v => { v.muted = isMuted; });
-                // 如果取消静音，尝试播放当前视频
-                if (!isMuted && currentVideoIndex >= 0) {
-                    const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                    if (panels[currentVideoIndex]) {
-                        const videoEl = panels[currentVideoIndex].querySelector('video');
-                        if (videoEl && videoEl.paused) {
-                            videoEl.play().catch(() => {});
-                        }
-                    }
-                }
-                showToast(isMuted ? '🔇 已静音' : '🔊 已开启声音');
-            });
-
-            // ==================== 键盘控制 ====================
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowDown' || e.key === 'j') {
-                    e.preventDefault();
-                    scrollToNextVideo();
-                } else if (e.key === 'ArrowUp' || e.key === 'k') {
-                    e.preventDefault();
-                    scrollToPrevVideo();
-                } else if (e.key === 'm') {
-                    e.preventDefault();
-                    soundToggle.click();
-                } else if (e.key === ' ') {
-                    e.preventDefault();
-                    const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                    if (panels[currentVideoIndex]) {
-                        const videoEl = panels[currentVideoIndex].querySelector('video');
-                        const playOverlay = panels[currentVideoIndex].querySelector('.play-overlay');
-                        if (videoEl) togglePlayPause(videoEl, playOverlay);
-                    }
-                }
-            });
-
-            function scrollToNextVideo() {
-                const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                if (currentVideoIndex < panels.length - 1) {
-                    const nextPanel = panels[currentVideoIndex + 1];
-                    nextPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-
-            function scrollToPrevVideo() {
-                const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                if (currentVideoIndex > 0) {
-                    const prevPanel = panels[currentVideoIndex - 1];
-                    prevPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-
-            // ==================== 滚动事件监听 ====================
-            videoScrollContainer.addEventListener('scroll', () => {
-                isScrolling = true;
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(() => {
-                    isScrolling = false;
-                }, 400);
-            });
-
-            // ==================== 状态覆盖层 ====================
-            function showLoadingState() {
-                loadingOverlay.classList.remove('hidden');
-                errorOverlay.classList.add('hidden');
-                emptyOverlay.classList.add('hidden');
-            }
-
-            function showErrorState(message) {
-                loadingOverlay.classList.add('hidden');
-                errorOverlay.classList.remove('hidden');
-                emptyOverlay.classList.add('hidden');
-                errorMessage.textContent = message || '无法获取视频列表，请检查网络或仓库设置。';
-            }
-
-            function showEmptyState() {
-                loadingOverlay.classList.add('hidden');
-                errorOverlay.classList.add('hidden');
-                emptyOverlay.classList.remove('hidden');
-            }
-
-            function hideAllOverlays() {
-                loadingOverlay.classList.add('hidden');
-                errorOverlay.classList.add('hidden');
-                emptyOverlay.classList.add('hidden');
-            }
-
-            // ==================== 初始化 ====================
-            async function init() {
-                showLoadingState();
-                likedVideos = getLikedFromStorage();
-
-                try {
-                    await loadAllVideos();
-                } catch (err) {
-                    console.error('加载视频列表失败:', err);
-                    showErrorState(err.message);
-                    return;
-                }
-
-                if (allVideos.length === 0) {
-                    showEmptyState();
-                    renderTabs();
-                    return;
-                }
-
-                hideAllOverlays();
-                renderTabs();
-                renderVideoList();
-
-                // 初始声音状态
-                soundToggle.classList.add('muted');
-                isMuted = true;
-            }
-
-            // ==================== 重试按钮 ====================
-            retryBtn.addEventListener('click', () => {
-                sessionStorage.removeItem(getCacheKey());
-                init();
-            });
-            refreshBtn.addEventListener('click', () => {
-                sessionStorage.removeItem(getCacheKey());
-                init();
-            });
-
-            // ==================== 启动应用 ====================
+        retryBtn.addEventListener('click', () => {
+            sessionStorage.removeItem(getCacheKey());
             init();
+        });
+        refreshBtn.addEventListener('click', () => {
+            sessionStorage.removeItem(getCacheKey());
+            init();
+        });
 
-            // ==================== 响应窗口大小变化 ====================
-            let resizeDebounce;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeDebounce);
-                resizeDebounce = setTimeout(() => {
-                    // 确保当前视频面板在视口中
-                    const panels = videoScrollContainer.querySelectorAll('.video-panel');
-                    if (panels[currentVideoIndex]) {
-                        panels[currentVideoIndex].scrollIntoView({ behavior: 'instant',
-                            block: 'start' });
-                    }
-                }, 300);
-            });
+        window.addEventListener('resize', () => {
+            clearTimeout(window._resizeDebounce);
+            window._resizeDebounce = setTimeout(() => {
+                const panels = videoScrollContainer.querySelectorAll('.video-panel');
+                if (panels[currentVideoIndex]) panels[currentVideoIndex].scrollIntoView({ behavior: 'instant', block: 'start' });
+            }, 300);
+        });
 
-            // ==================== 移动端手势优化 ====================
-            // 防止意外缩放和双指操作导致的问题
-            document.addEventListener('gesturestart', (e) => {
-                // 允许在视频区域外进行缩放手势
-            }, { passive: true });
+        document.addEventListener('gesturestart', () => {}, { passive: true });
 
-            console.log('🎬 DPMHZX 视频流已就绪');
-            console.log(`   📂 仓库: ${CONFIG.username}/${CONFIG.repo}`);
-            console.log(`   🌿 分支: ${CONFIG.branch}`);
-            console.log(`   🎥 目录: ${CONFIG.videoDir}`);
-            console.log('   ⌨️  快捷键: ↑↓ 切换视频 | M 静音切换 | 空格 播放/暂停');
-            console.log('   📱 支持触摸滑动 | 双击点赞 | 点击暂停');
-        })();
-    </script>
+        init();
+
+        console.log('🎬 DPMHZX 视频流已就绪（默认有声）');
+    })();
+</script>
 </body>
 </html>
